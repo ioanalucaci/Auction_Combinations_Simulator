@@ -1,0 +1,16 @@
+# Simulation
+number_of_rounds = 100
+
+
+# Auction
+number_of_bidders = 100
+auction_types = t1t2
+reserved_price = 100
+auctioneer_type = a2
+
+# Bidders
+b1 = 0
+b2 = 100
+b3 = 0
+b4 = 0
+b5 = 0
