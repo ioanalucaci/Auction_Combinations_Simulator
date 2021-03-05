@@ -6,7 +6,6 @@ from mesa import Model
 from mesa.time import SimultaneousActivation
 from bidder import Bidder
 from auctioneer import Auctioneer
-import auction_information
 
 
 # TODO: figure out how to pass information between auctions
@@ -36,18 +35,22 @@ class Auction(Model):
         self.number_of_bidders = number_of_bidders
         self.bid_schedule = SimultaneousActivation(self)
 
+        id_bidder = 0
+
         # For every type, we see how many we have to create
-        for bidder_type in auction_information.bidders_type.keys():
-            number_of_bidders_type = bidder_types[bidder_type] * self.number_of_bidders
+        for bidder_type in bidder_types.keys():
+            number_of_bidders_type = int(bidder_types[bidder_type] * self.number_of_bidders / 100)
 
             # We create the number of bidders for a specific type
             for counter in range(number_of_bidders_type):
                 budget = random.randint(reserved_price * 0.6, reserved_price * 1.4)
-                a = Bidder(counter, budget, bidder_type, self)
+                a = Bidder(id_bidder, budget, bidder_type, self)
                 self.bid_schedule.add(a)
+                id_bidder = id_bidder + 1
 
     def step(self):
         """ Simulates an auction or combination of auctions."""
+
         # First auction type
         self.select_auction_type()
 
@@ -61,22 +64,15 @@ class Auction(Model):
 
     def select_auction_type(self):
         """ Determines which auction to be selected. """
-        if self.current_auction == 't1':
-            self.english_auction()
-        elif self.current_auction == 't2':
-            self.dutch_auction()
-        elif self.current_auction == 't3':
-            self.sealedbid_auction()
-        elif self.current_auction == 't4':
-            self.vickrey_auction()
+        if self.current_auction == 't1' or self.current_auction == 't2':
+            self.multi_round_auction()
+        elif self.current_auction == 't3' or self.current_auction == 't4':
+            self.one_shot_auction()
 
     # TODO: Skeleton structures for now
-    def english_auction(self):
-        """ Simulates an English auction."""
-        return True
 
-    def dutch_auction(self):
-        """ Simulates a Dutch auction."""
+    def multi_round_auction(self):
+        """ Simulates an auction with multiple rounds auction."""
         while True:
             if self.auctioneer.winner != self.auctioneer.unique_id:
                 break

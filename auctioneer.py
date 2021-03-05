@@ -2,7 +2,7 @@
 The auctioneer class for the simulation.
 """
 from mesa import Agent
-import auction_information
+import auction_information as info
 
 
 # TODO: Figure out the decision for the different auctions
@@ -26,6 +26,7 @@ class Auctioneer(Agent):
         self.auctioneer_type = auctioneer_type
         self.existing_bids = {}
         self.winner = unique_id
+        self.rate = info.auctioneer_type[auctioneer_type]
         self.winning_bid = 0
 
     def auction(self):
