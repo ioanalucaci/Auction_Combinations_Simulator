@@ -6,9 +6,6 @@ import random
 import auction_information as info
 
 
-# TODO: Figure out decision_to_bid
-# TODO: figure out counter_proposal for the different types of auction
-
 class Bidder(Agent):
     """Agent that simulates a bidder."""
 
@@ -45,6 +42,10 @@ class Bidder(Agent):
         :param current_bid: the current bid of the auctioneer
         :returns: True if it decides to bid; otherwise False
         """
+        # If it's a one-shot, then the bidder has to send a bid
+        if self.model.current_auction == 't3' or self.model.current_auction == 't4':
+            return True
+
         if current_bid > self.budget:
             return False
 
@@ -71,10 +72,9 @@ class Bidder(Agent):
         elif self.model.current_auction == 't4':
             personal_bid = self.vickrey_auction(current_bid)
 
-        self.model.auctioneer.existing_bids[self.unique_id] = personal_bid
-        return True
+        if personal_bid > 0:
+            self.model.auctioneer.existing_bids[self.unique_id] = personal_bid
 
-    # TODO: Skeleton for now
     def english_auction(self, current_bid):
         """
         Simulates an English auction.
@@ -86,7 +86,7 @@ class Bidder(Agent):
         personal_bid = current_bid + current_bid * self.utility
 
         if personal_bid > self.budget:
-            personal_bid = self.budget
+            return -10
 
         return personal_bid
 
@@ -107,13 +107,15 @@ class Bidder(Agent):
 
         return True
 
+    # TODO: Figure these two out
     def sealedbid_auction(self, current_bid):
         """
         Simulates a first-price sealed-bid auction.
+
         :param current_bid: The current bid of the auctioneer.
         :return: the personal bid to submit.
         """
-        return True
+        pass
 
     def vickrey_auction(self, current_bid):
         """
@@ -122,4 +124,4 @@ class Bidder(Agent):
         :param current_bid: The current bid of the auctioneer.
         :return: the personal bid to submit.
         """
-        return True
+        pass

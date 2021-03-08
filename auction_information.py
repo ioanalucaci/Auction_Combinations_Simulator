@@ -4,11 +4,11 @@ The information about the bidder and auctioneer types that can be changed at any
 
 # Bidder types of the shape (risk, utility)
 bidders_type = {
-    'b1': (2, 0.2),
-    'b2': (10, 1),
-    'b3': (20, 2),
-    'b4': (2, 2),
-    'b5': (20, 0.2)
+    'b1': (2, 0.02),
+    'b2': (10, 0.1),
+    'b3': (20, 0.2),
+    'b4': (2, 0.2),
+    'b5': (20, 0.02)
 }
 
 # Auctioneer types of the shape price_change

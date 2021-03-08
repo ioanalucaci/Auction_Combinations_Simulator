@@ -14,7 +14,7 @@ from auctioneer import Auctioneer
 class Auction(Model):
     """Model that simulates an auction situation. Used to dictate the communication between auctioneers and bidders."""
 
-    def __init__(self, number_of_bidders, auction_types, reserved_price, auctioneer_type, bidder_types):
+    def __init__(self, number_of_bidders, auction_types, starting_price, reserved_price, auctioneer_type, bidder_types):
         """
         Initialisation function for the auction model.
 
@@ -29,7 +29,7 @@ class Auction(Model):
         self.current_auction = auction_types[0]
 
         # Create auctioneer
-        self.auctioneer = Auctioneer(-3, reserved_price, auctioneer_type, self)
+        self.auctioneer = Auctioneer(-3, starting_price, reserved_price, auctioneer_type, self)
 
         # Create bidders
         self.number_of_bidders = number_of_bidders
@@ -56,6 +56,13 @@ class Auction(Model):
 
         self.current_auction = self.auction_types[1]
 
+        # We remove all the agents that did not move forward
+        for bidder in self.bid_schedule.agents:
+            if bidder.unique_id not in self.auctioneer.bidders_for_next_round:
+                self.bid_schedule.agents.remove(bidder)
+        self.auctioneer.bidders_for_next_round = []
+        self.auctioneer.move_next = False
+
         # Then the second auction type
         self.select_auction_type()
 
@@ -74,16 +81,12 @@ class Auction(Model):
     def multi_round_auction(self):
         """ Simulates an auction with multiple rounds auction."""
         while True:
-            if self.auctioneer.winner != self.auctioneer.unique_id:
+            if self.auctioneer.winner != self.auctioneer.unique_id or self.auctioneer.move_next:
                 break
             self.auctioneer.auction()
             self.bid_schedule.step()
             self.auctioneer.decide()
 
-    def sealedbid_auction(self):
-        """ Simulates a first-price sealed-bid auction."""
-        return True
-
-    def vickrey_auction(self):
-        """ Simulates a Vickrey auction."""
-        return True
+    def one_shot_auction(self):
+        """ Simulates an auction with only one round."""
+        pass
