@@ -28,13 +28,15 @@ class Auctioneer(Agent):
         self.existing_bids = {}
         self.previous_bids = {}
         self.winner = unique_id
-        self.rate = info.auctioneer_type[auctioneer_type]
+        self.rate = info.auctioneer_type[auctioneer_type][0]
         self.winning_bid = 0
-        self.bidders_for_next_round = []
         self.move_next = False
+        self.previous_highest_bid = 0
 
     def auction(self):
         """ Simulates an auctioneer's call."""
+        if len(self.previous_bids) > 0:
+            self.previous_highest_bid = max(self.previous_bids.values())
         self.previous_bids = self.existing_bids
         self.existing_bids = {}
         print(self.previous_bids)
@@ -46,7 +48,6 @@ class Auctioneer(Agent):
             self.determine_winner()
         else:
             self.change_current_bid()
-
 
     def change_current_bid(self):
         """ Determines how to change the current bid based on the auction type."""
@@ -66,25 +67,22 @@ class Auctioneer(Agent):
         print(self.previous_bids.values())
 
         # If the auction is the second one, the winner is the highest one.
-        if self.model.current_auction == self.model.auction_types[1] and max(self.previous_bids.values()) > self.reserved_price:
+        # otherwise, we move forward
+        if len(self.previous_bids) == 0:
+            return
+
+        if self.model.current_auction == self.model.auction_types[1] and max(
+                self.previous_bids.values()) > self.reserved_price:
             self.winner = list(self.previous_bids.keys())[0]
             self.winning_bid = self.previous_bids[self.winner]
-
-        # We can select here the bidders to go in the next round;
-        # for now, bidders who bid no less than 10% lower than the highest bid
         else:
-            for bidder in self.previous_bids.keys():
-                if self.previous_bids[bidder] >= self.winning_bid * 1.1:
-                    self.bidders_for_next_round.append(bidder)
-                else:
-                    break
             self.move_next = True
 
     def english_auction(self, highest_bid):
         """ Simulates an English auction. We take the highest current bid and add the rate to it."""
-        next_highest_bid = highest_bid * (100 + self.rate)/100
+        next_highest_bid = highest_bid * (100 + self.rate) / 100
         if self.price == highest_bid:
-            self.price = next_highest_bid*(100 + self.rate)/100
+            self.price = next_highest_bid * (100 + self.rate) / 100
         elif self.price > highest_bid:
             self.price = self.price * (100 + self.rate) / 100
         else:
@@ -92,4 +90,10 @@ class Auctioneer(Agent):
 
     def dutch_auction(self, highest_bid):
         """ Simulates a Dutch auction.We take the highest current bid and add the rate to it."""
-        self.price = highest_bid * (100 + self.rate)/100
+        self.price = highest_bid * (100 + self.rate) / 100
+
+    def update_auctioneer(self):
+        """ Updates the auctioneer after the first round of auctions"""
+        self.move_next = False
+        self.rate = info.auctioneer_type[self.auctioneer_type][1]
+        self.reserved_price = self.previous_highest_bid

@@ -2,6 +2,7 @@
 The auction class for the simulation.
 """
 import random
+import auction_information as info
 from mesa import Model
 from mesa.time import SimultaneousActivation
 from bidder import Bidder
@@ -44,7 +45,8 @@ class Auction(Model):
             # We create the number of bidders for a specific type
             for counter in range(number_of_bidders_type):
                 budget = random.randint(reserved_price * 0.6, reserved_price * 1.4)
-                a = Bidder(id_bidder, budget, bidder_type, self)
+                bidder_information = info.bidders_type[bidder_type]
+                a = Bidder(id_bidder, budget, bidder_type, bidder_information, self)
                 self.bid_schedule.add(a)
                 id_bidder = id_bidder + 1
 
@@ -54,14 +56,9 @@ class Auction(Model):
         # First auction type
         self.select_auction_type()
 
+        # Change the auction type and auctioneer information
         self.current_auction = self.auction_types[1]
-
-        # We remove all the agents that did not move forward
-        for bidder in self.bid_schedule.agents:
-            if bidder.unique_id not in self.auctioneer.bidders_for_next_round:
-                self.bid_schedule.agents.remove(bidder)
-        self.auctioneer.bidders_for_next_round = []
-        self.auctioneer.move_next = False
+        self.auctioneer.update_auctioneer()
 
         # Then the second auction type
         self.select_auction_type()

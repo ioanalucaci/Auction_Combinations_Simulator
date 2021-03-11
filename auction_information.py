@@ -1,19 +1,30 @@
 """
 The information about the bidder and auctioneer types that can be changed at any point.
 """
+import math
 
-# Bidder types of the shape (risk, utility)
+# TODO: implement functions to return a number within certain limits which will always be constant
+#   (for constant), always be lower(for descending) etc.
+
+# Bidder types of the shape (risk, base_rate, utility)
 bidders_type = {
-    'b1': (2, 0.02),
-    'b2': (10, 0.1),
-    'b3': (20, 0.2),
-    'b4': (2, 0.2),
-    'b5': (20, 0.02)
+    'constant': (0.2, 0.02, 0.1),
+    'ascending': (0.1, 0.1, 0.1),
+    'descending': (0.2, 0.2, 0.1),
+    'non-monotonic': (0.02, 0.2, 0.1)
 }
 
-# Auctioneer types of the shape price_change
+# Auctioneer types of the shape (first_rate, second_rate)
 auctioneer_type = {
-    'a1': 2,
-    'a2': 10,
-    'a3': 20,
+    'constant': (0.02, 0.01),
+    'ascending': (0.1, 0.05),
+    'descending': (0.2, 0.1),
+    'non-monotonic': (0.3, 0.1)
+}
+
+functions = {
+    'constant': lambda rate, utility, risk: rate,
+    'ascending': lambda rate, utility, risk: 1 - math.exp(- rate * (2 - utility - risk)),
+    'descending': lambda rate, utility, risk: math.fabs(math.exp(rate * (utility + risk - 2) - 1)),
+    'non-monotonic': lambda rate, utility, risk: math.sin(rate) + (utility + risk) * rate,
 }
