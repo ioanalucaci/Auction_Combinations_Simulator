@@ -5,6 +5,6 @@ from auction import *
 # TODO: Work on connecting the .txt file with the main file
 # GNU plot(?) and vectorised plots
 
-model = Auction(1000, ['t2','t1'], 70, 50, 'a1', {'b1': 10, 'b2': 30, 'b3': 40, 'b4': 20})
+model = Auction(1000, ['t2','t1'], 70, 50, 'a', {'a': 10, 'b': 30, 'c': 40, 'd': 20})
 
 model.step()
