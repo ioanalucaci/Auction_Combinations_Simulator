@@ -5,10 +5,10 @@ import math
 
 # Bidder types of the shape (risk, base_rate, utility)
 bidders_type = {
-    'a': (0.2, 0.02, 0.1),
+    'a': (0.1, 0.02, 0.1),
     'b': (0.1, 0.1, 0.1),
-    'c': (0.2, 0.2, 0.1),
-    'd': (0.02, 0.2, 0.1)
+    'c': (0.1, 0.2, 0.1),
+    'd': (0.1, 0.2, 0.1)
 }
 
 # Auctioneer types of the shape (first_rate, second_rate)

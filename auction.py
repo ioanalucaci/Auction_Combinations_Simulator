@@ -26,15 +26,20 @@ class Auction(Model):
         :param bidder_types: the types of bidders to join this auction alongside their percentage
         """
 
+        self.information = {'Auctioneer Type': auctioneer_type, 'Starting Bid': starting_price,
+                            'Auction Types': ''.join(auction_types)} | bidder_types
+
         self.auction_types = auction_types
         self.current_auction = auction_types[0]
 
         # Create auctioneer
-        self.auctioneer = Auctioneer(-3, starting_price, reserved_price, auctioneer_type, self)
+        self.auctioneer = Auctioneer(-1, starting_price, reserved_price, auctioneer_type, self)
 
         # Create bidders
         self.number_of_bidders = number_of_bidders
         self.bid_schedule = SimultaneousActivation(self)
+
+        self.rounds = 0
 
         id_bidder = 0
 
@@ -59,12 +64,22 @@ class Auction(Model):
         # Change the auction type and auctioneer information
         self.current_auction = self.auction_types[1]
         self.auctioneer.update_auctioneer()
+        # print("===================================================")
 
         # Then the second auction type
         self.select_auction_type()
+        if self.auctioneer.winner == -1:
+            self.information['Winner Type'] = 'auctioneer'
+        else:
+            winning_bidder = \
+                list(filter(lambda bidder: bidder.unique_id == self.auctioneer.winner, self.bid_schedule.agents))
+            self.information['Winner Type'] = winning_bidder[0].bidder_type
+
+        self.information['Winning Bid'] = self.auctioneer.winning_bid
+        self.information['Round No'] = self.rounds
 
         # Announce the winner
-        print("Bidder {0} won with price {1}".format(self.auctioneer.winner, self.auctioneer.winning_bid))
+        # print("Bidder {0} won with price {1}".format(self.auctioneer.winner, self.auctioneer.winning_bid))
 
     def select_auction_type(self):
         """ Determines which auction to be selected. """
@@ -80,10 +95,12 @@ class Auction(Model):
         while True:
             if self.auctioneer.winner != self.auctioneer.unique_id or self.auctioneer.move_next:
                 break
+            self.rounds = self.rounds + 1
             self.auctioneer.auction()
             self.bid_schedule.step()
             self.auctioneer.decide()
 
     def one_shot_auction(self):
         """ Simulates an auction with only one round."""
+        self.rounds = self.rounds + 1
         pass
