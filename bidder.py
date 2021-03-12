@@ -5,11 +5,10 @@ from mesa import Agent
 import random
 import auction_information as info
 
-
 class Bidder(Agent):
     """Agent that simulates a bidder."""
 
-    def __init__(self, unique_id, budget, bidder_type, model):
+    def __init__(self, unique_id, budget, bidder_type, bidder_information, model):
         """
         Initialisation function for the bidder agent.
 
@@ -21,7 +20,7 @@ class Bidder(Agent):
         super().__init__(unique_id, model)
         self.budget = budget
         self.bidder_type = bidder_type
-        (self.risk, self.utility) = info.bidders_type[self.bidder_type]
+        (self.risk, self.rate, self.utility) = bidder_information
 
     def step(self):
         """ Takes a step in an auction."""
@@ -49,7 +48,7 @@ class Bidder(Agent):
         if current_bid > self.budget:
             return False
 
-        chance = random.randint(1, 100)
+        chance = random.uniform(0, 1)
         if chance < self.risk:
             return True
         else:
@@ -62,6 +61,7 @@ class Bidder(Agent):
         :param current_bid: The current bid of the auctioneer.
         """
         personal_bid = 0
+        self.rate = info.functions[self.bidder_type](self.rate, self.utility, self.risk)
 
         if self.model.current_auction == 't1':
             personal_bid = self.english_auction(current_bid)
@@ -83,7 +83,7 @@ class Bidder(Agent):
         :return: the personal bid to submit.
         """
 
-        personal_bid = current_bid + current_bid * self.utility
+        personal_bid = current_bid + current_bid * self.rate
 
         if personal_bid > self.budget:
             return -10
@@ -98,7 +98,7 @@ class Bidder(Agent):
         :return: the personal bid to submit.
         """
 
-        personal_bid = current_bid - current_bid * self.utility
+        personal_bid = current_bid - current_bid * self.rate
 
         if personal_bid > self.budget:
             personal_bid = self.budget

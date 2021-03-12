@@ -12,15 +12,17 @@ There are 4 types of auctions that can be combined:
 - T4 - Vickrey
 
 ###### Auctioneer
-The auctioneer varies in terms of how much the auction price will be changed between rounds (when applicable). Thus, there will be three profiles:
-- A1 - Slow auctioneer - will try to sell the item by changing the price by a very small amount each round
-- A2 - Neutral auctioneer - will sell the item by changing the price by a normal amount each round
-- A3 - Fast auctioneer - will try to sell the item by changing the price by a very big amount each round
+The auctioneer has, at the moment, two rates: the first auction rate and the second auction rate. This can be seen in auction_information.py
 
-###### Bidder
-The bidder varies in terms of two parameters: risk and utility. Risk refers to how likely is it for the bidder to place a bid. Utility refers to how valued is the item to be sold to the specific bidder. Thus, there are five profiles:
-- B1 - Low risk, low utility
-- B2 - Medium risk, medium utility
-- B3 - High risk, high utility
-- B4 - Low risk, high utility
-- B5 - high risk, low utility
+##### Bidder
+The bidder has three parameters:
+- risk
+- base rate
+- utility
+
+##### Functions
+There are 4 functions connected to 4 profiles at the moment:
+- *a* : constant function
+- *b* : increasing function
+- *c* : decreasing function
+- *d* : non-monotonous function
