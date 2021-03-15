@@ -5,10 +5,10 @@ import math
 
 # Bidder types of the shape (risk, base_rate, utility)
 bidders_type = {
-    'a': (0.1, 0.02, 0.1),
-    'b': (0.1, 0.1, 0.1),
-    'c': (0.1, 0.2, 0.1),
-    'd': (0.1, 0.2, 0.1)
+    'a': (0.1, 0.1, 0.1),
+    'b': (0.5, 0.1, 0.1),
+    'c': (0.5, 0.2, 0.1),
+    'd': (0.5, 0.2, 0.1)
 }
 
 # Auctioneer types of the shape (first_rate, second_rate)
@@ -19,6 +19,7 @@ auctioneer_type = {
     'd': (0.3, 0.1)
 }
 
+# TODO: As long as they're different and they capture real-life aspects, and have a different shape
 functions = {
     'a': lambda rate, utility, risk: rate,
     'b': lambda rate, utility, risk: 1 - math.exp(- rate * (2 - utility - risk)),

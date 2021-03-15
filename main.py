@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
 from auction import *
-import metrics_writer
+import metrics_writer as mw
+import parameters_reader as pr
 import time
 
 # TODO: Work on connecting the .txt file with the main file
@@ -9,9 +9,10 @@ import time
 list_of_auctions = []
 start = time.time()
 
+number_of_rounds, parameters, bidders = pr.read_parameters()
 
-for x in range(0, 1000):
-    model = Auction(100, ['t1', 't2'], 55, 50, 'a', {'a': 25, 'b': 25, 'c': 25, 'd': 25})
+for x in range(0, number_of_rounds):
+    model = Auction(parameters, bidders)
     model.step()
     list_of_auctions.append(model)
     # print("++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -19,6 +20,6 @@ end = time.time()
 
 print("I am done with the models! It took {0}".format(end - start))
 
-metrics_writer.write_metrics('metrics.csv', list_of_auctions)
+mw.write_metrics(list_of_auctions)
 
 print("Writing took {0}".format(time.time() - end))

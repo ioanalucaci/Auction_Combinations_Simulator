@@ -22,13 +22,16 @@ class Auctioneer(Agent):
         :param model: the auction model it belongs to
         """
         super().__init__(unique_id, model)
+        # initial information
         self.price = price
         self.reserved_price = reserved_price
         self.auctioneer_type = auctioneer_type
-        self.existing_bids = {}
-        self.previous_bids = {}
         self.winner = unique_id
         self.rate = info.auctioneer_type[auctioneer_type][0]
+
+        # initializations
+        self.existing_bids = {}
+        self.previous_bids = {}
         self.winning_bid = 0
         self.move_next = False
         self.previous_highest_bid = 0

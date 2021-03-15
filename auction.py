@@ -15,28 +15,28 @@ from auctioneer import Auctioneer
 class Auction(Model):
     """Model that simulates an auction situation. Used to dictate the communication between auctioneers and bidders."""
 
-    def __init__(self, number_of_bidders, auction_types, starting_price, reserved_price, auctioneer_type, bidder_types):
+    def __init__(self, parameters, bidder_types):
         """
         Initialisation function for the auction model.
 
         :param number_of_bidders: the number of bidders that take part in this auction
         :param auction_types: the types of auction to be combined
-        :param reserved_price: the reserved price at which the auction will start
+        :param reserve_price: the reserve price at which the auction will start
         :param auctioneer_type: the auctioneer type that will be used for this auction
         :param bidder_types: the types of bidders to join this auction alongside their percentage
         """
 
-        self.information = {'Auctioneer Type': auctioneer_type, 'Starting Bid': starting_price,
-                            'Auction Types': ''.join(auction_types)} | bidder_types
+        self.information = parameters | bidder_types
 
-        self.auction_types = auction_types
-        self.current_auction = auction_types[0]
+        self.auction_types = list(parameters["Auction Types"].split(','))
+        self.current_auction = self.auction_types[0]
 
         # Create auctioneer
-        self.auctioneer = Auctioneer(-1, starting_price, reserved_price, auctioneer_type, self)
+        reserve_price = parameters["Reserve Price"]
+        self.auctioneer = Auctioneer(-1, parameters["Starting Bid"], reserve_price, parameters["Auctioneer Type"], self)
 
         # Create bidders
-        self.number_of_bidders = number_of_bidders
+        self.number_of_bidders = parameters["Number of Bidders"]
         self.bid_schedule = SimultaneousActivation(self)
 
         self.rounds = 0
@@ -49,7 +49,7 @@ class Auction(Model):
 
             # We create the number of bidders for a specific type
             for counter in range(number_of_bidders_type):
-                budget = random.randint(reserved_price * 0.6, reserved_price * 1.4)
+                budget = random.randint(reserve_price * 0.6, reserve_price * 1.4)
                 bidder_information = info.bidders_type[bidder_type]
                 a = Bidder(id_bidder, budget, bidder_type, bidder_information, self)
                 self.bid_schedule.add(a)
