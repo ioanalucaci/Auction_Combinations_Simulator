@@ -3,9 +3,6 @@ import metrics_writer as mw
 import parameters_reader as pr
 import time
 
-# TODO: Work on connecting the .txt file with the main file
-# GNU plot(?) and vectorised plots
-
 list_of_auctions = []
 start = time.time()
 

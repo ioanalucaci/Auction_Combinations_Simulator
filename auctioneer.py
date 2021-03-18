@@ -44,6 +44,9 @@ class Auctioneer(Agent):
             self.previous_winner = list(self.previous_bids.keys())[0]
             self.previous_highest_bid = self.previous_bids[self.previous_winner]
 
+        if len(self.existing_bids) > 0:
+            self.winning_bid = max(list(self.existing_bids.values()))
+
         self.previous_bids = self.existing_bids
         self.existing_bids = {}
         # print(self.previous_bids)
@@ -73,20 +76,20 @@ class Auctioneer(Agent):
         self.previous_bids = dict(sorted(self.previous_bids.items(), key=lambda item: item[1], reverse=True))
 
         # If the auction is the second one, the winner is the highest one.
-        # otherwise, we move forward
         if len(self.previous_bids) == 0:
             if self.model.current_auction == 't2':
                 self.dutch_auction(0)
             return
 
+        # otherwise, we move forward
         if self.model.current_auction == self.model.auction_types[1] and max(
                 self.previous_bids.values()) > self.reserved_price:
             self.winner = list(self.previous_bids.keys())[0]
             self.winning_bid = self.previous_bids[self.winner]
-        elif self.previous_winner != self.unique_id:
-            self.winner = self.previous_winner
-            self.winning_bid = self.previous_highest_bid
         else:
+            if self.previous_winner != self.unique_id:
+                self.winner = self.previous_winner
+                self.winning_bid = self.previous_highest_bid
             self.move_next = True
 
     def english_auction(self, highest_bid):
@@ -106,5 +109,9 @@ class Auctioneer(Agent):
         self.move_next = False
         self.rate = info.auctioneer_type[self.auctioneer_type][1]
         self.previous_bids = {}
-        if self.previous_highest_bid != 0:
-            self.reserved_price = self.previous_highest_bid
+
+        # We take the highest bid as the reserved price. This is the most the bidders were willing to pay last auction.
+        self.reserved_price = max(self.winning_bid, self.previous_highest_bid)
+
+        if self.model.auction_types[0] == 't2':
+            self.price = self.reserved_price * (1 + self.rate)

@@ -105,8 +105,6 @@ class Bidder(Agent):
 
         return personal_bid
 
-        return True
-
     # TODO: Figure these two out
     def sealedbid_auction(self, current_bid):
         """

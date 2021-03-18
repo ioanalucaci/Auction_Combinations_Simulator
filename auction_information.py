@@ -5,7 +5,7 @@ import math
 
 # Bidder types of the shape (risk, base_rate, utility)
 bidders_type = {
-    'a': (0.1, 0.1, 0.1),
+    'a': (0.5, 0.1, 0.1),
     'b': (0.5, 0.1, 0.1),
     'c': (0.5, 0.2, 0.1),
     'd': (0.5, 0.2, 0.1)
@@ -16,7 +16,7 @@ auctioneer_type = {
     'a': (0.02, 0.01),
     'b': (0.1, 0.05),
     'c': (0.2, 0.1),
-    'd': (0.3, 0.1)
+    'd': (0.5, 0.1)
 }
 
 # TODO: As long as they're different and they capture real-life aspects, and have a different shape

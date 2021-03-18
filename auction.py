@@ -49,7 +49,7 @@ class Auction(Model):
 
             # We create the number of bidders for a specific type
             for counter in range(number_of_bidders_type):
-                budget = random.randint(reserve_price * 0.6, reserve_price * 1.4)
+                budget = random.randint(reserve_price, reserve_price * 3)
                 bidder_information = info.bidders_type[bidder_type]
                 a = Bidder(id_bidder, budget, bidder_type, bidder_information, self)
                 self.bid_schedule.add(a)
@@ -60,11 +60,10 @@ class Auction(Model):
 
         # First auction type
         self.select_auction_type()
-
         # Change the auction type and auctioneer information
         self.current_auction = self.auction_types[1]
         self.auctioneer.update_auctioneer()
-        # print("===================================================")
+
 
         # Then the second auction type
         self.select_auction_type()
