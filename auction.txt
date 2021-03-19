@@ -3,13 +3,13 @@ number_of_rounds = 100
 
 # Auction
 Number of Bidders = 100
-Auction Types = t2,t1
+Auction Types = t1,t4
 Reserve Price = 100
-Starting Bid = 450
-Auctioneer Type = d
+Starting Bid = 150
+Auctioneer Type = a
 
 # Bidders
 a = 10
-b = 10
-c = 40
+b = 20
+c = 30
 d = 40

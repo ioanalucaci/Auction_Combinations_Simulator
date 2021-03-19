@@ -6,7 +6,6 @@ def write_metrics(list_of_auctions):
     """
     Writes the metrics in a csv file
 
-    :param file_name: the name of the file to write the metrics in.
     :param list_of_auctions: the list of auctions to be exported in the csv file
     :return:
     """

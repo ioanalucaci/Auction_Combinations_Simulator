@@ -5,9 +5,7 @@ from mesa import Agent
 import auction_information as info
 
 
-# TODO: Figure out the decision for the different auctions
 # TODO: Figure out change_current_bid for all types
-# TODO: Figure out how to determine the winner for all types AND how much to charge them
 
 class Auctioneer(Agent):
     """Agents that simulates an auctioneer of a certain type."""
@@ -40,15 +38,17 @@ class Auctioneer(Agent):
     def auction(self):
         """ Simulates an auctioneer's call."""
         if len(self.previous_bids) > 0:
-            self.previous_bids = dict(sorted(self.previous_bids.items(), key=lambda item: item[1], reverse=True))
             self.previous_winner = list(self.previous_bids.keys())[0]
             self.previous_highest_bid = self.previous_bids[self.previous_winner]
 
         if len(self.existing_bids) > 0:
-            self.winning_bid = max(list(self.existing_bids.values()))
+            self.existing_bids = dict(sorted(self.existing_bids.items(), key=lambda item: item[1], reverse=True))
+            self.winner = list(self.existing_bids.keys())[0]
+            self.winning_bid = self.existing_bids[list(self.existing_bids.keys())[0]]
 
         self.previous_bids = self.existing_bids
         self.existing_bids = {}
+
         # print(self.previous_bids)
         # print("The auction price is {0}.".format(str(self.price)))
 
@@ -62,6 +62,14 @@ class Auctioneer(Agent):
     def change_current_bid(self):
         """ Determines how to change the current bid based on the auction type."""
         highest_bid = max(list(self.existing_bids.values()))
+
+        if self.model.current_auction == 't3':
+            self.sealedbid_auction()
+        if self.model.current_auction == 't4':
+            self.vickrey_auction()
+
+        self.update_rate()
+
         if highest_bid < self.reserved_price:
             self.determine_winner()
         else:
@@ -72,24 +80,22 @@ class Auctioneer(Agent):
 
     def determine_winner(self):
         """ Determines the winner and how much they have to pay."""
-        # We order first based on price descending
-        self.previous_bids = dict(sorted(self.previous_bids.items(), key=lambda item: item[1], reverse=True))
-
-        # If the auction is the second one, the winner is the highest one.
         if len(self.previous_bids) == 0:
             if self.model.current_auction == 't2':
                 self.dutch_auction(0)
             return
 
-        # otherwise, we move forward
+        # If the auction is the second one, the winner is the highest one.
         if self.model.current_auction == self.model.auction_types[1] and max(
                 self.previous_bids.values()) > self.reserved_price:
             self.winner = list(self.previous_bids.keys())[0]
             self.winning_bid = self.previous_bids[self.winner]
+        # otherwise, we move forward
         else:
             if self.previous_winner != self.unique_id:
                 self.winner = self.previous_winner
                 self.winning_bid = self.previous_highest_bid
+
             self.move_next = True
 
     def english_auction(self, highest_bid):
@@ -102,11 +108,34 @@ class Auctioneer(Agent):
         if highest_bid == 0:
             self.price = self.price * (1 - self.rate)
         else:
-            self.price = highest_bid * (1 + self.rate)
+            self.price = max(self.price * (1 - self.rate), highest_bid * 1 + self.rate)
+
+    def sealedbid_auction(self):
+        """ Simulates a First Price Sealed Bid auction. Since it is one-shot, we only need the winner."""
+        self.existing_bids = dict(sorted(self.existing_bids.items(), key=lambda item: item[1], reverse=True))
+        self.winner = list(self.existing_bids.keys())[0]
+        self.winning_bid = self.existing_bids[self.winner]
+
+        if self.model.current_auction != self.model.auction_types[1]:
+            self.move_next = True
+
+    def vickrey_auction(self):
+        """
+        Simulates a Vickrey auction. Since it's one-shot, we only need the winner, but the price it'll pay will be
+        the second highest bid.
+        """
+
+        self.existing_bids = dict(sorted(self.existing_bids.items(), key=lambda item: item[1], reverse=True))
+        self.winner = list(self.existing_bids.keys())[0]
+        self.winning_bid = self.existing_bids[list(self.existing_bids.keys())[1]]
+
+        if self.model.current_auction != self.model.auction_types[1]:
+            self.move_next = True
 
     def update_auctioneer(self):
         """ Updates the auctioneer after the first round of auctions"""
         self.move_next = False
+        self.winner = self.unique_id
         self.rate = info.auctioneer_type[self.auctioneer_type][1]
         self.previous_bids = {}
 
@@ -115,3 +144,7 @@ class Auctioneer(Agent):
 
         if self.model.auction_types[0] == 't2':
             self.price = self.reserved_price * (1 + self.rate)
+
+    def update_rate(self):
+        """ Updates the rate based on the auctioneer's profile"""
+        self.rate = info.functions[self.auctioneer_type](self.rate, 1, 1)

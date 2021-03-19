@@ -13,8 +13,8 @@ bidders_type = {
 
 # Auctioneer types of the shape (first_rate, second_rate)
 auctioneer_type = {
-    'a': (0.02, 0.01),
-    'b': (0.1, 0.05),
+    'a': (0.2, 0.01),
+    'b': (0.5, 0.05),
     'c': (0.2, 0.1),
     'd': (0.5, 0.1)
 }

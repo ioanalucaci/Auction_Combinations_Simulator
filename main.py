@@ -8,11 +8,12 @@ start = time.time()
 
 number_of_rounds, parameters, bidders = pr.read_parameters()
 
-for x in range(0, number_of_rounds):
+for counter in range(0, number_of_rounds):
     model = Auction(parameters, bidders)
     model.step()
     list_of_auctions.append(model)
     # print("++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
 end = time.time()
 
 print("I am done with the models! It took {0}".format(end - start))
