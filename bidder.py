@@ -6,6 +6,7 @@ import random
 import auction_information as info
 
 
+# TODO: Map out the functions to give a value between 0 and 1
 class Bidder(Agent):
     """Agent that simulates a bidder."""
 
@@ -41,14 +42,14 @@ class Bidder(Agent):
         :param current_bid: the current bid of the auctioneer
         :returns: True if it decides to bid; otherwise False
         """
-        # # If it's a one-shot, then the bidder has to send a bid
-        # if self.model.current_auction == 't3' or self.model.current_auction == 't4':
-        #     return True
+        # If it's a one-shot, then the bidder has to send a bid
+        if self.model.current_auction in ['t3', 't4']:
+            return True
 
         if current_bid > self.budget:
             return False
 
-        chance = random.uniform(0, 1)
+        chance = random.random()
         if chance < self.risk:
             return True
         else:
@@ -111,9 +112,9 @@ class Bidder(Agent):
 
         :return: the personal bid to submit.
         """
-        chance = random.uniform(0, 1)
+        chance = random.random()
 
-        if chance < self.risk:
+        if chance <= self.risk:
             return self.budget
         else:
             return self.budget * (1 - self.rate)
@@ -124,9 +125,9 @@ class Bidder(Agent):
 
         :return: the personal bid to submit.
         """
-        chance = random.uniform(0, 1)
+        chance = random.random()
 
-        if chance < self.risk:
+        if chance <= self.risk:
             return self.budget
         else:
             return self.budget * (1 - self.rate)

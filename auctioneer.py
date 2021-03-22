@@ -5,8 +5,8 @@ from mesa import Agent
 import auction_information as info
 
 
-# TODO: Figure out change_current_bid for all types
-
+# TODO: Figure out why sometimes it just skips the second auction completely after one round.
+# TODO: Map out the functions to give a value between o and 1
 class Auctioneer(Agent):
     """Agents that simulates an auctioneer of a certain type."""
 
@@ -52,16 +52,16 @@ class Auctioneer(Agent):
         # print(self.previous_bids)
         # print("The auction price is {0}.".format(str(self.price)))
 
-    def decide(self):
+    def decide(self, first_round):
         """ Determines whether to change the current bid or determine the winner."""
-        if len(self.existing_bids) == 0:
+        if len(self.existing_bids) == 0 and not first_round:
             self.determine_winner()
         else:
             self.change_current_bid()
 
     def change_current_bid(self):
         """ Determines how to change the current bid based on the auction type."""
-        highest_bid = max(list(self.existing_bids.values()))
+        highest_bid = max(list(self.existing_bids.values())) if len(self.existing_bids) > 0 else 0
 
         if self.model.current_auction == 't3':
             self.sealedbid_auction()
@@ -86,7 +86,7 @@ class Auctioneer(Agent):
             return
 
         # If the auction is the second one, the winner is the highest one.
-        if self.model.current_auction == self.model.auction_types[1] and max(
+        if self.model.current_auction == self.model.auction_types[-1] and max(
                 self.previous_bids.values()) > self.reserved_price:
             self.winner = list(self.previous_bids.keys())[0]
             self.winning_bid = self.previous_bids[self.winner]
@@ -116,7 +116,7 @@ class Auctioneer(Agent):
         self.winner = list(self.existing_bids.keys())[0]
         self.winning_bid = self.existing_bids[self.winner]
 
-        if self.model.current_auction != self.model.auction_types[1]:
+        if self.model.current_auction != self.model.auction_types[-1]:
             self.move_next = True
 
     def vickrey_auction(self):
@@ -127,9 +127,13 @@ class Auctioneer(Agent):
 
         self.existing_bids = dict(sorted(self.existing_bids.items(), key=lambda item: item[1], reverse=True))
         self.winner = list(self.existing_bids.keys())[0]
-        self.winning_bid = self.existing_bids[list(self.existing_bids.keys())[1]]
 
-        if self.model.current_auction != self.model.auction_types[1]:
+        if len(self.existing_bids) >= 2:
+            self.winning_bid = self.existing_bids[list(self.existing_bids.keys())[1]]
+        else:
+            self.winning_bid = self.existing_bids[list(self.existing_bids.keys())[0]]
+
+        if self.model.current_auction != self.model.auction_types[-1]:
             self.move_next = True
 
     def update_auctioneer(self):
@@ -144,6 +148,9 @@ class Auctioneer(Agent):
 
         if self.model.auction_types[0] == 't2':
             self.price = self.reserved_price * (1 + self.rate)
+
+        if self.model.auction_types[0] in ['t3', 't4']:
+            self.price = self.reserved_price
 
     def update_rate(self):
         """ Updates the rate based on the auctioneer's profile"""

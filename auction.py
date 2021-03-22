@@ -24,6 +24,7 @@ class Auction(Model):
         """
 
         super().__init__()
+        self.running = True
         self.information = parameters | bidder_types
 
         self.auction_types = list(parameters["Auction Types"].split(','))
@@ -47,7 +48,7 @@ class Auction(Model):
 
             # We create the number of bidders for a specific type
             for counter in range(number_of_bidders_type):
-                budget = random.randint(reserve_price, reserve_price * 3)
+                budget = random.randint(reserve_price, reserve_price * 6)
                 bidder_information = info.bidders_type[bidder_type]
                 a = Bidder(id_bidder, budget, bidder_type, bidder_information, self)
                 self.bid_schedule.add(a)
@@ -59,14 +60,15 @@ class Auction(Model):
         # First auction type
         self.select_auction_type()
 
-        # Change the auction type and auctioneer information
-        self.current_auction = self.auction_types[1]
-        self.auctioneer.update_auctioneer()
+        if len(self.auction_types) == 2:
+            # Change the auction type and auctioneer information
+            self.current_auction = self.auction_types[1]
+            self.auctioneer.update_auctioneer()
 
-        # print("<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+            # print("<<<<<<<<<<<<<")
 
-        # Second auction type
-        self.select_auction_type()
+            # Second auction type
+            self.select_auction_type()
 
         # Determine winner
         if self.auctioneer.winner == -1:
@@ -80,6 +82,8 @@ class Auction(Model):
         self.information['Winning Bid'] = self.auctioneer.winning_bid
         self.information['Round No'] = self.rounds
 
+        self.running = False
+
         # Announce the winner
         # print("Bidder {0} won with price {1}".format(self.auctioneer.winner, self.auctioneer.winning_bid))
 
@@ -92,17 +96,19 @@ class Auction(Model):
 
     def multi_round_auction(self):
         """ Simulates an auction with multiple rounds auction."""
+        first_round = True
         while True:
             if self.auctioneer.winner != self.auctioneer.unique_id or self.auctioneer.move_next:
                 break
             self.rounds = self.rounds + 1
             self.auctioneer.auction()
             self.bid_schedule.step()
-            self.auctioneer.decide()
+            self.auctioneer.decide(first_round)
+            first_round = False
 
     def one_shot_auction(self):
         """ Simulates an auction with only one round."""
         self.rounds = self.rounds + 1
         self.auctioneer.auction()
         self.bid_schedule.step()
-        self.auctioneer.decide()
+        self.auctioneer.decide(True)

@@ -1,12 +1,12 @@
 # Simulation
-number_of_rounds = 100
+number_of_rounds = 1000
 
 # Auction
 Number of Bidders = 100
-Auction Types = t1,t4
+Auction Types = t3,t1
 Reserve Price = 100
-Starting Bid = 150
-Auctioneer Type = a
+Starting Bid = 100
+Auctioneer Type = d
 
 # Bidders
 a = 10
