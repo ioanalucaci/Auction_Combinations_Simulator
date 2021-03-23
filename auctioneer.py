@@ -5,8 +5,6 @@ from mesa import Agent
 import auction_information as info
 
 
-# TODO: Figure out why sometimes it just skips the second auction completely after one round.
-# TODO: Map out the functions to give a value between o and 1
 class Auctioneer(Agent):
     """Agents that simulates an auctioneer of a certain type."""
 
@@ -43,14 +41,15 @@ class Auctioneer(Agent):
 
         if len(self.existing_bids) > 0:
             self.existing_bids = dict(sorted(self.existing_bids.items(), key=lambda item: item[1], reverse=True))
-            self.winner = list(self.existing_bids.keys())[0]
-            self.winning_bid = self.existing_bids[list(self.existing_bids.keys())[0]]
+            if self.price < max(self.existing_bids):
+                self.winner = list(self.existing_bids.keys())[0]
+                self.winning_bid = self.existing_bids[list(self.existing_bids.keys())[0]]
 
         self.previous_bids = self.existing_bids
         self.existing_bids = {}
 
-        # print(self.previous_bids)
-        # print("The auction price is {0}.".format(str(self.price)))
+        print(self.previous_bids)
+        print("The auction price is {0}.".format(str(self.price)))
 
     def decide(self, first_round):
         """ Determines whether to change the current bid or determine the winner."""
@@ -71,7 +70,10 @@ class Auctioneer(Agent):
         self.update_rate()
 
         if highest_bid < self.reserved_price:
-            self.determine_winner()
+            if self.model.current_auction == 't2':
+                self.dutch_auction(highest_bid)
+            else:
+                self.determine_winner()
         else:
             if self.model.current_auction == 't1':
                 self.english_auction(highest_bid)
@@ -80,16 +82,13 @@ class Auctioneer(Agent):
 
     def determine_winner(self):
         """ Determines the winner and how much they have to pay."""
-        if len(self.previous_bids) == 0:
-            if self.model.current_auction == 't2':
-                self.dutch_auction(0)
-            return
-
         # If the auction is the second one, the winner is the highest one.
-        if self.model.current_auction == self.model.auction_types[-1] and max(
-                self.previous_bids.values()) > self.reserved_price:
-            self.winner = list(self.previous_bids.keys())[0]
-            self.winning_bid = self.previous_bids[self.winner]
+        if self.model.current_auction == self.model.auction_types[-1]:
+            if len(self.previous_bids) == 0:
+                self.move_next = True
+            elif max(self.previous_bids.values()) > self.reserved_price:
+                self.winner = list(self.previous_bids.keys())[0]
+                self.winning_bid = self.previous_bids[self.winner]
         # otherwise, we move forward
         else:
             if self.previous_winner != self.unique_id:
@@ -106,9 +105,16 @@ class Auctioneer(Agent):
     def dutch_auction(self, highest_bid):
         """ Simulates a Dutch auction.We take the highest current bid and add the rate to it."""
         if highest_bid == 0:
-            self.price = self.price * (1 - self.rate)
+            price = self.price * (1 - self.rate)
         else:
-            self.price = max(self.price * (1 - self.rate), highest_bid * 1 + self.rate)
+            price = max(self.price * (1 - self.rate), highest_bid * (1 + self.rate))
+
+        if self.reserved_price > price:
+            self.move_next = True
+        elif self.price < price:
+            self.determine_winner()
+        else:
+            self.price = price
 
     def sealedbid_auction(self):
         """ Simulates a First Price Sealed Bid auction. Since it is one-shot, we only need the winner."""

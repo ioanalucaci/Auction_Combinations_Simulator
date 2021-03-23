@@ -6,7 +6,6 @@ import random
 import auction_information as info
 
 
-# TODO: Map out the functions to give a value between 0 and 1
 class Bidder(Agent):
     """Agent that simulates a bidder."""
 

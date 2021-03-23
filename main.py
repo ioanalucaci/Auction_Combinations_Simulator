@@ -27,4 +27,4 @@ mw.write_metrics(list_of_auctions)
 
 print("Writing took {0}".format(time.time() - end))
 
-da.analyse_winner()
+# da.analyse_winner()

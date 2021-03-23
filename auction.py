@@ -9,9 +9,6 @@ from bidder import Bidder
 from auctioneer import Auctioneer
 
 
-# TODO: figure out how to pass information between auctions
-# TODO: Figure out how to make the dutch and english auction
-
 class Auction(Model):
     """Model that simulates an auction situation. Used to dictate the communication between auctioneers and bidders."""
 
@@ -70,16 +67,20 @@ class Auction(Model):
             # Second auction type
             self.select_auction_type()
 
-        # Determine winner
+        # Update information
         if self.auctioneer.winner == -1:
             self.information['Winner Type'] = 'auctioneer'
+            self.information['Winning Bid'] = self.information['Starting Bid']
+            self.information['Winner Welfare'] = 0
+            self.information['Auctioneer ROI'] = 0
         else:
             winning_bidder = \
                 list(filter(lambda bidder: bidder.unique_id == self.auctioneer.winner, self.bid_schedule.agents))
             self.information['Winner Type'] = winning_bidder[0].bidder_type
-
-        # Update information
-        self.information['Winning Bid'] = self.auctioneer.winning_bid
+            self.information['Winning Bid'] = self.auctioneer.winning_bid
+            self.information['Winner Welfare'] = self.auctioneer.winning_bid * 100 / winning_bidder[0].budget
+            self.information['Auctioneer ROI'] = (self.auctioneer.winning_bid - self.information['Reserve Price']) \
+                                                 / self.information['Reserve Price']
         self.information['Round No'] = self.rounds
 
         self.running = False

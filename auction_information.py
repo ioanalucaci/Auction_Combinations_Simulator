@@ -19,10 +19,14 @@ auctioneer_type = {
     'd': (0.01, 0.01)
 }
 
-# TODO: As long as they're different and they capture real-life aspects, and have a different shape
 functions = {
     'a': lambda rate, utility, risk: rate,
-    'b': lambda rate, utility, risk: 1 - math.exp(- rate * (2 - utility - risk)),
-    'c': lambda rate, utility, risk: math.fabs(math.exp(rate * (utility + risk - 2) - 1)),
-    'd': lambda rate, utility, risk: math.sin(rate) + (utility + risk) * rate,
+    'b': lambda rate, utility, risk: 1 - 2 ** (- rate / (utility + risk)),
+    'c': lambda rate, utility, risk: 2 ** (- rate / (utility + risk)),
+    'd': lambda rate, utility, risk: math.sin(rate) + (utility + risk) * rate
+   # 'd': lambda rate, utility, risk: math.fabs(math.cos(utility / (rate * risk))),
 }
+
+# 'b': lambda rate, utility, risk: 1 - math.exp(- rate * (2 - utility - risk)),
+# 'c': lambda rate, utility, risk: math.fabs(math.exp(rate * (utility + risk - 2) - 1)),
+# 'd': lambda rate, utility, risk: math.sin(rate) + (utility + risk) * rate

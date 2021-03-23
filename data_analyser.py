@@ -2,10 +2,14 @@ import pandas as pd
 import random
 import matplotlib.pyplot as plt
 from scipy import stats
+from datetime import datetime
 
 
 def analyse_winner():
-    metrics_data = pd.read_csv('metrics 22-03-21.csv')
+    today = datetime.today()
+
+    file_name = "metrics " + today.strftime('%d-%m-%y') + ".csv"
+    metrics_data = pd.read_csv(file_name)
 
     # Separating the data based on the winner type and extracting only the winning bid
     anova_data = {
