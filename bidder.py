@@ -116,7 +116,7 @@ class Bidder(Agent):
         if chance <= self.risk:
             return self.budget
         else:
-            return self.budget * (1 - self.rate)
+            return min(self.budget * (1 - self.rate), self.budget)
 
     def vickrey_auction(self):
         """
@@ -129,4 +129,4 @@ class Bidder(Agent):
         if chance <= self.risk:
             return self.budget
         else:
-            return self.budget * (1 - self.rate)
+            return min(self.budget * (1 - self.rate), self.budget)

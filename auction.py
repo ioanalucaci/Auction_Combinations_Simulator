@@ -62,31 +62,26 @@ class Auction(Model):
             self.current_auction = self.auction_types[1]
             self.auctioneer.update_auctioneer()
 
-            # print("<<<<<<<<<<<<<")
-
             # Second auction type
             self.select_auction_type()
 
         # Update information
-        if self.auctioneer.winner == -1:
+        if self.auctioneer.winner == -1 or self.auctioneer.winning_bid < self.auctioneer.reserved_price:
             self.information['Winner Type'] = 'auctioneer'
             self.information['Winning Bid'] = self.information['Starting Bid']
-            self.information['Winner Welfare'] = 0
+            self.information['Winner ROI'] = 0
             self.information['Auctioneer ROI'] = 0
         else:
             winning_bidder = \
                 list(filter(lambda bidder: bidder.unique_id == self.auctioneer.winner, self.bid_schedule.agents))
             self.information['Winner Type'] = winning_bidder[0].bidder_type
             self.information['Winning Bid'] = self.auctioneer.winning_bid
-            self.information['Winner Welfare'] = self.auctioneer.winning_bid * 100 / winning_bidder[0].budget
+            self.information['Winner ROI'] = (winning_bidder[0].budget - self.auctioneer.winning_bid) / self.auctioneer.winning_bid
             self.information['Auctioneer ROI'] = (self.auctioneer.winning_bid - self.information['Reserve Price']) \
                                                  / self.information['Reserve Price']
         self.information['Round No'] = self.rounds
 
         self.running = False
-
-        # Announce the winner
-        # print("Bidder {0} won with price {1}".format(self.auctioneer.winner, self.auctioneer.winning_bid))
 
     def select_auction_type(self):
         """ Determines which auction to be selected. """
@@ -99,7 +94,7 @@ class Auction(Model):
         """ Simulates an auction with multiple rounds auction."""
         first_round = True
         while True:
-            if self.auctioneer.winner != self.auctioneer.unique_id or self.auctioneer.move_next:
+            if self.auctioneer.move_next:
                 break
             self.rounds = self.rounds + 1
             self.auctioneer.auction()

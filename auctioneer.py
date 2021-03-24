@@ -35,24 +35,33 @@ class Auctioneer(Agent):
 
     def auction(self):
         """ Simulates an auctioneer's call."""
-        if len(self.previous_bids) > 0:
-            self.previous_winner = list(self.previous_bids.keys())[0]
-            self.previous_highest_bid = self.previous_bids[self.previous_winner]
 
+        # We keep track of the previous highest bid
+        self.previous_winner = self.winner
+        self.previous_highest_bid = self.winning_bid
+
+        # And we keep track of the current highest bid
         if len(self.existing_bids) > 0:
             self.existing_bids = dict(sorted(self.existing_bids.items(), key=lambda item: item[1], reverse=True))
-            if self.price < max(self.existing_bids):
+
+            # We update the current 'winner' only if it's higher than the current price or we're in a Dutch auction
+            if self.price < max(self.existing_bids.values()) or self.model.current_auction == 't2':
                 self.winner = list(self.existing_bids.keys())[0]
                 self.winning_bid = self.existing_bids[list(self.existing_bids.keys())[0]]
 
         self.previous_bids = self.existing_bids
         self.existing_bids = {}
 
-        print(self.previous_bids)
-        print("The auction price is {0}.".format(str(self.price)))
+        # print("-------------------------------")
+        # print(self.previous_bids)
+        # print("The auction price is {0}.".format(str(self.price)))
+        # print("Highest bid is {0} with oldest highest bid being {1}".format(self.winning_bid, self.previous_highest_bid))
 
     def decide(self, first_round):
         """ Determines whether to change the current bid or determine the winner."""
+        # print(self.existing_bids)
+        # print("--------------------------------")
+
         if len(self.existing_bids) == 0 and not first_round:
             self.determine_winner()
         else:
@@ -60,8 +69,18 @@ class Auctioneer(Agent):
 
     def change_current_bid(self):
         """ Determines how to change the current bid based on the auction type."""
-        highest_bid = max(list(self.existing_bids.values())) if len(self.existing_bids) > 0 else 0
 
+        self.existing_bids = dict(sorted(self.existing_bids.items(), key=lambda item: item[1], reverse=True))
+        highest_bid = self.existing_bids[list(self.existing_bids.keys())[0]] if len(self.existing_bids) > 0 else 0
+
+        # If the current winning bid is smaller than the highest bid, we update accordingly
+        if self.winning_bid < highest_bid:
+            self.previous_winner = self.winner
+            self.previous_highest_bid = self.winning_bid
+            self.winner = list(self.existing_bids.keys())[0]
+            self.winning_bid = highest_bid
+
+        # After that, we choose which function is best for the auction type
         if self.model.current_auction == 't3':
             self.sealedbid_auction()
         if self.model.current_auction == 't4':
@@ -69,6 +88,7 @@ class Auctioneer(Agent):
 
         self.update_rate()
 
+        # The Dutch has a special case where the price can decrease with no bidders
         if highest_bid < self.reserved_price:
             if self.model.current_auction == 't2':
                 self.dutch_auction(highest_bid)
@@ -82,16 +102,17 @@ class Auctioneer(Agent):
 
     def determine_winner(self):
         """ Determines the winner and how much they have to pay."""
-        # If the auction is the second one, the winner is the highest one.
-        if self.model.current_auction == self.model.auction_types[-1]:
-            if len(self.previous_bids) == 0:
-                self.move_next = True
-            elif max(self.previous_bids.values()) > self.reserved_price:
+
+        # There are times where there are no bids and we only have to run the Dutch auction again
+        if self.model.current_auction == 't2' and len(self.previous_bids) == len(self.existing_bids) == 0:
+            self.dutch_auction(0)
+        else:
+            previous_bids_max = max(self.previous_bids.values()) if len(self.previous_bids) > 0 else 0
+
+            if self.reserved_price < previous_bids_max and self.winning_bid < previous_bids_max:
                 self.winner = list(self.previous_bids.keys())[0]
                 self.winning_bid = self.previous_bids[self.winner]
-        # otherwise, we move forward
-        else:
-            if self.previous_winner != self.unique_id:
+            elif self.previous_winner != self.unique_id and self.winning_bid < self.previous_highest_bid:
                 self.winner = self.previous_winner
                 self.winning_bid = self.previous_highest_bid
 
@@ -104,14 +125,13 @@ class Auctioneer(Agent):
 
     def dutch_auction(self, highest_bid):
         """ Simulates a Dutch auction.We take the highest current bid and add the rate to it."""
-        if highest_bid == 0:
-            price = self.price * (1 - self.rate)
-        else:
-            price = max(self.price * (1 - self.rate), highest_bid * (1 + self.rate))
+        price = max(self.price * (1 - self.rate), highest_bid * (1 + self.rate))
 
+        # If we reached below the reserved price, we exit
         if self.reserved_price > price:
             self.move_next = True
-        elif self.price < price:
+        # If we're in the risk of raising the price or going below what the winning bid currently is, determine winner
+        elif self.price < price or price < self.winning_bid:
             self.determine_winner()
         else:
             self.price = price
@@ -150,7 +170,7 @@ class Auctioneer(Agent):
         self.previous_bids = {}
 
         # We take the highest bid as the reserved price. This is the most the bidders were willing to pay last auction.
-        self.reserved_price = max(self.winning_bid, self.previous_highest_bid)
+        self.reserved_price = max(self.winning_bid, self.previous_highest_bid, self.price)
 
         if self.model.auction_types[0] == 't2':
             self.price = self.reserved_price * (1 + self.rate)
