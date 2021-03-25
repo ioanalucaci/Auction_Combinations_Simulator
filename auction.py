@@ -66,7 +66,7 @@ class Auction(Model):
             self.select_auction_type()
 
         # Update information
-        if self.auctioneer.winner == -1 or self.auctioneer.winning_bid < self.auctioneer.reserved_price:
+        if self.auctioneer.winner == -1 or self.auctioneer.winning_bid < self.information['Reserve Price']:
             self.information['Winner Type'] = 'auctioneer'
             self.information['Winning Bid'] = self.information['Starting Bid']
             self.information['Winner ROI'] = 0
@@ -81,6 +81,8 @@ class Auction(Model):
                                                  / self.information['Reserve Price']
         self.information['Round No'] = self.rounds
 
+        # print("Winner is: {0}".format(self.information['Winning Bid']))
+        # print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
         self.running = False
 
     def select_auction_type(self):

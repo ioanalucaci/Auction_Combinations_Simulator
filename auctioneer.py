@@ -37,8 +37,9 @@ class Auctioneer(Agent):
         """ Simulates an auctioneer's call."""
 
         # We keep track of the previous highest bid
-        self.previous_winner = self.winner
-        self.previous_highest_bid = self.winning_bid
+        if self.previous_highest_bid < self.winning_bid:
+            self.previous_winner = self.winner
+            self.previous_highest_bid = self.winning_bid
 
         # And we keep track of the current highest bid
         if len(self.existing_bids) > 0:
@@ -165,7 +166,6 @@ class Auctioneer(Agent):
     def update_auctioneer(self):
         """ Updates the auctioneer after the first round of auctions"""
         self.move_next = False
-        self.winner = self.unique_id
         self.rate = info.auctioneer_type[self.auctioneer_type][1]
         self.previous_bids = {}
 
@@ -175,8 +175,17 @@ class Auctioneer(Agent):
         if self.model.auction_types[0] == 't2':
             self.price = self.reserved_price * (1 + self.rate)
 
+        if self.model.auction_types[-1] == 't2':
+            self.reserved_price = max(self.winning_bid, self.previous_highest_bid)
+            self.price = self.price * (1 - self.rate)
+
         if self.model.auction_types[0] in ['t3', 't4']:
             self.price = self.reserved_price
+
+        self.winner = self.unique_id
+        self.winning_bid = 0
+        self.previous_highest_bid = 0
+        self.previous_winner = self.unique_id
 
     def update_rate(self):
         """ Updates the rate based on the auctioneer's profile"""

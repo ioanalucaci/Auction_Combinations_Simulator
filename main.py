@@ -3,6 +3,7 @@ import metrics_writer as mw
 import parameters_reader as pr
 import data_analyser as da
 import time
+from datetime import datetime
 
 # TODO: Look into BatchRunner
 # TODO: Look into DataCollector
@@ -27,4 +28,8 @@ mw.write_metrics(list_of_auctions)
 
 print("Writing took {0}".format(time.time() - end))
 
-# da.analyse_winner()
+# today = datetime.today()
+#
+# file_name = "metrics " + today.strftime('%d-%m-%y') + ".csv"
+#
+# da.visualise_data("Winner Type", "Auctioneer ROI", file_name)
