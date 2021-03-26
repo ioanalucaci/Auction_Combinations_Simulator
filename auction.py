@@ -90,7 +90,7 @@ class Auction(Model):
         if self.current_auction == 't1' or self.current_auction == 't2':
             self.multi_round_auction()
         elif self.current_auction == 't3' or self.current_auction == 't4':
-            self.one_shot_auction()
+            self.one_shot_auction(True)
 
     def multi_round_auction(self):
         """ Simulates an auction with multiple rounds auction."""
@@ -98,15 +98,12 @@ class Auction(Model):
         while True:
             if self.auctioneer.move_next:
                 break
-            self.rounds = self.rounds + 1
-            self.auctioneer.auction()
-            self.bid_schedule.step()
-            self.auctioneer.decide(first_round)
+            self.one_shot_auction(first_round)
             first_round = False
 
-    def one_shot_auction(self):
+    def one_shot_auction(self, first_round):
         """ Simulates an auction with only one round."""
         self.rounds = self.rounds + 1
         self.auctioneer.auction()
         self.bid_schedule.step()
-        self.auctioneer.decide(True)
+        self.auctioneer.decide(first_round)

@@ -5,25 +5,25 @@ import math
 
 # Bidder types of the shape (risk, base_rate, utility)
 bidders_type = {
-    'a': (0.001, 0.01, 0.01),
-    'b': (0.01, 0.01, 0.02),
-    'c': (0.05, 0.02, 0.03),
-    'd': (0.02, 0.02, 0.04)
+    'A': (0.001, 0.01, 0.01),
+    'B': (0.01, 0.01, 0.02),
+    'C': (0.05, 0.02, 0.03),
+    'D': (0.02, 0.02, 0.04)
 }
 
 # Auctioneer types of the shape (first_rate, second_rate)
 auctioneer_type = {
-    'a': (0.02, 0.001),
-    'b': (0.05, 0.005),
-    'c': (0.02, 0.01),
-    'd': (0.01, 0.01)
+    'A': (0.02, 0.001),
+    'B': (0.05, 0.005),
+    'C': (0.02, 0.01),
+    'D': (0.01, 0.01)
 }
 
 functions = {
-    'a': lambda rate, utility, risk: rate,
-    'b': lambda rate, utility, risk: 1 - 2 ** (- rate / (utility + risk)),
-    'c': lambda rate, utility, risk: 2 ** (- rate / (utility + risk)),
-    'd': lambda rate, utility, risk: math.sin(rate) + (utility + risk) * rate
+    'A': lambda rate, utility, risk: rate,
+    'B': lambda rate, utility, risk: 1 - 2 ** (- rate / (utility + risk)),
+    'C': lambda rate, utility, risk: 2 ** (- rate / (utility + risk)),
+    'D': lambda rate, utility, risk: math.sin(rate) + (utility + risk) * rate
    # 'd': lambda rate, utility, risk: math.fabs(math.cos(utility / (rate * risk))),
 }
 

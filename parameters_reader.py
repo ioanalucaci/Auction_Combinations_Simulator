@@ -22,10 +22,10 @@ def read_parameters():
     }
 
     bidders = {
-        "a": 0,
-        "b": 0,
-        "c": 0,
-        "d": 0
+        "A": 0,
+        "B": 0,
+        "C": 0,
+        "D": 0
     }
 
     pattern = r'((\w+ )*\w+) = ((t\d,t\d)|\d+|\w+)'

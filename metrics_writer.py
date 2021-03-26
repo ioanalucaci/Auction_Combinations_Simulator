@@ -18,11 +18,11 @@ def write_metrics(list_of_auctions):
 
         # These are the table headers.
         metrics_writer.writerow(
-            ['Auction Types', 'Auctioneer Type', 'Bidder a %', 'Bidder b %', 'Bidder c %', 'Bidder d %', 'Winner Type',
+            ['Auction Types', 'Auctioneer Type', 'Bidder A %', 'Bidder B %', 'Bidder C %', 'Bidder D %', 'Winner Type',
              'Starting Bid', 'Winning Bid', 'Winner ROI', 'Auctioneer ROI', '# Rounds'])
 
         # These are the headers they correspond to in terms of how the auction is coded.
-        headers = ('Auction Types', 'Auctioneer Type', 'a', 'b', 'c', 'd', 'Winner Type', 'Starting Bid', 'Winning Bid',
+        headers = ('Auction Types', 'Auctioneer Type', 'A', 'B', 'C', 'D', 'Winner Type', 'Starting Bid', 'Winning Bid',
                    'Winner ROI', 'Auctioneer ROI', 'Round No')
 
         for auction in list_of_auctions:
