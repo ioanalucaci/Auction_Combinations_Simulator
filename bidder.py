@@ -5,6 +5,7 @@ from mesa import Agent
 import random
 import auction_information as info
 
+
 class Bidder(Agent):
     """Agent that simulates a bidder."""
 
@@ -31,8 +32,7 @@ class Bidder(Agent):
 
     def advance(self):
         """ Advances the bidder through the model."""
-        if self.model.auctioneer.winner == self.unique_id:
-            print("Bidder {0} is happy! Won with price {1}".format(self.unique_id, self.budget))
+        pass
 
     def decision_to_bid(self, current_bid):
         """
@@ -42,13 +42,13 @@ class Bidder(Agent):
         :returns: True if it decides to bid; otherwise False
         """
         # If it's a one-shot, then the bidder has to send a bid
-        if self.model.current_auction == 't3' or self.model.current_auction == 't4':
+        if self.model.current_auction in ['t3', 't4']:
             return True
 
         if current_bid > self.budget:
             return False
 
-        chance = random.uniform(0, 1)
+        chance = random.random()
         if chance < self.risk:
             return True
         else:
@@ -68,9 +68,9 @@ class Bidder(Agent):
         elif self.model.current_auction == 't2':
             personal_bid = self.dutch_auction(current_bid)
         elif self.model.current_auction == 't3':
-            personal_bid = self.sealedbid_auction(current_bid)
+            personal_bid = self.sealedbid_auction()
         elif self.model.current_auction == 't4':
-            personal_bid = self.vickrey_auction(current_bid)
+            personal_bid = self.vickrey_auction()
 
         if personal_bid > 0:
             self.model.auctioneer.existing_bids[self.unique_id] = personal_bid
@@ -105,23 +105,28 @@ class Bidder(Agent):
 
         return personal_bid
 
-        return True
-
-    # TODO: Figure these two out
-    def sealedbid_auction(self, current_bid):
+    def sealedbid_auction(self):
         """
         Simulates a first-price sealed-bid auction.
 
-        :param current_bid: The current bid of the auctioneer.
         :return: the personal bid to submit.
         """
-        pass
+        chance = random.random()
 
-    def vickrey_auction(self, current_bid):
+        if chance <= self.risk:
+            return self.budget
+        else:
+            return min(self.budget * (1 - self.rate), self.budget)
+
+    def vickrey_auction(self):
         """
         Simulates a Vickrey auction.
 
-        :param current_bid: The current bid of the auctioneer.
         :return: the personal bid to submit.
         """
-        pass
+        chance = random.random()
+
+        if chance <= self.risk:
+            return self.budget
+        else:
+            return min(self.budget * (1 - self.rate), self.budget)

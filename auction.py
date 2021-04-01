@@ -2,41 +2,37 @@
 The auction class for the simulation.
 """
 import random
-import auction_information as info
 from mesa import Model
 from mesa.time import SimultaneousActivation
 from bidder import Bidder
 from auctioneer import Auctioneer
 
 
-# TODO: figure out how to pass information between auctions
-# TODO: Figure out how to make the dutch and english auction
-
 class Auction(Model):
     """Model that simulates an auction situation. Used to dictate the communication between auctioneers and bidders."""
 
-    def __init__(self, number_of_bidders, auction_types, starting_price, reserved_price, auctioneer_type, bidder_types):
+    def __init__(self, parameters, bidder_types):
         """
         Initialisation function for the auction model.
 
-        :param number_of_bidders: the number of bidders that take part in this auction
-        :param auction_types: the types of auction to be combined
-        :param reserved_price: the reserved price at which the auction will start
-        :param auctioneer_type: the auctioneer type that will be used for this auction
+        :param parameters: all the required parameters for the auction.
         :param bidder_types: the types of bidders to join this auction alongside their percentage
         """
 
-        self.information = {'Auctioneer Type': auctioneer_type, 'Starting Bid': starting_price,
-                            'Auction Types': ''.join(auction_types)} | bidder_types
+        super().__init__()
+        self.running = True
+        self.information = parameters | bidder_types
 
-        self.auction_types = auction_types
-        self.current_auction = auction_types[0]
+        self.auction_types = list(parameters["Auction Types"].split(','))
+        self.current_auction = self.auction_types[0]
 
         # Create auctioneer
-        self.auctioneer = Auctioneer(-1, starting_price, reserved_price, auctioneer_type, self)
+        reserve_price = parameters["Reserve Price"]
+        base_rate = random.uniform(0.1, 1)
+        self.auctioneer = Auctioneer(-1, parameters["Starting Bid"], reserve_price, parameters["Auctioneer Type"], base_rate, self)
 
         # Create bidders
-        self.number_of_bidders = number_of_bidders
+        self.number_of_bidders = parameters["Number of Bidders"]
         self.bid_schedule = SimultaneousActivation(self)
 
         self.rounds = 0
@@ -49,8 +45,13 @@ class Auction(Model):
 
             # We create the number of bidders for a specific type
             for counter in range(number_of_bidders_type):
-                budget = random.randint(reserved_price * 0.6, reserved_price * 1.4)
-                bidder_information = info.bidders_type[bidder_type]
+                budget = random.randint(reserve_price, reserve_price * 6)
+
+                risk = random.random()
+                base_rate = random.random()
+                utility = random.random()
+                bidder_information = (risk, base_rate, utility)
+
                 a = Bidder(id_bidder, budget, bidder_type, bidder_information, self)
                 self.bid_schedule.add(a)
                 id_bidder = id_bidder + 1
@@ -61,46 +62,56 @@ class Auction(Model):
         # First auction type
         self.select_auction_type()
 
-        # Change the auction type and auctioneer information
-        self.current_auction = self.auction_types[1]
-        self.auctioneer.update_auctioneer()
-        # print("===================================================")
+        if len(self.auction_types) == 2:
+            # Change the auction type and auctioneer information
+            self.current_auction = self.auction_types[1]
+            new_base_rate = random.uniform(0, 0.1)
+            self.auctioneer.update_auctioneer(new_base_rate)
 
-        # Then the second auction type
-        self.select_auction_type()
-        if self.auctioneer.winner == -1:
+            # Second auction type
+            self.select_auction_type()
+
+        # Update information
+        if self.auctioneer.winner == -1 or self.auctioneer.winning_bid < self.information['Reserve Price']:
             self.information['Winner Type'] = 'auctioneer'
+            self.information['Winning Bid'] = self.information['Starting Bid']
+            self.information['Winner Satisfaction'] = 0
+            self.information['Auctioneer Satisfaction'] = 0
         else:
             winning_bidder = \
                 list(filter(lambda bidder: bidder.unique_id == self.auctioneer.winner, self.bid_schedule.agents))
             self.information['Winner Type'] = winning_bidder[0].bidder_type
+            self.information['Winning Bid'] = self.auctioneer.winning_bid
 
-        self.information['Winning Bid'] = self.auctioneer.winning_bid
+            self.information['Winner Satisfaction'] = (winning_bidder[0].budget - self.auctioneer.winning_bid) / self.auctioneer.winning_bid
+            self.information['Auctioneer Satisfaction'] = (self.auctioneer.winning_bid - self.information['Reserve Price']) / self.information['Reserve Price']
+
+        self.information['Social Welfare'] = self.auctioneer.winning_bid / len(self.bid_schedule.agents)
         self.information['Round No'] = self.rounds
 
-        # Announce the winner
-        # print("Bidder {0} won with price {1}".format(self.auctioneer.winner, self.auctioneer.winning_bid))
+        # print("Winner is: {0}".format(self.information['Winning Bid']))
+        # print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")
+        self.running = False
 
     def select_auction_type(self):
         """ Determines which auction to be selected. """
         if self.current_auction == 't1' or self.current_auction == 't2':
             self.multi_round_auction()
         elif self.current_auction == 't3' or self.current_auction == 't4':
-            self.one_shot_auction()
-
-    # TODO: Skeleton structures for now
+            self.one_shot_auction(True)
 
     def multi_round_auction(self):
         """ Simulates an auction with multiple rounds auction."""
+        first_round = True
         while True:
-            if self.auctioneer.winner != self.auctioneer.unique_id or self.auctioneer.move_next:
+            if self.auctioneer.move_next:
                 break
-            self.rounds = self.rounds + 1
-            self.auctioneer.auction()
-            self.bid_schedule.step()
-            self.auctioneer.decide()
+            self.one_shot_auction(first_round)
+            first_round = False
 
-    def one_shot_auction(self):
+    def one_shot_auction(self, first_round):
         """ Simulates an auction with only one round."""
         self.rounds = self.rounds + 1
-        pass
+        self.auctioneer.auction()
+        self.bid_schedule.step()
+        self.auctioneer.decide(first_round)
