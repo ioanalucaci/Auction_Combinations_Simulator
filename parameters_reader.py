@@ -1,7 +1,6 @@
 import re
 
 
-# TODO: Add exception handling in case there's a problem with a .txt file, e.g. people forget to complete the info
 def read_parameters():
     """
     Reads the information about an auction from a file.

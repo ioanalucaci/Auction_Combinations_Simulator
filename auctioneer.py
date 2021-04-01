@@ -8,7 +8,7 @@ import auction_information as info
 class Auctioneer(Agent):
     """Agents that simulates an auctioneer of a certain type."""
 
-    def __init__(self, unique_id, price, reserved_price, auctioneer_type, model):
+    def __init__(self, unique_id, price, reserved_price, auctioneer_type, base_rate, model):
         """
         Initialisation function for the auctioneer model.
 
@@ -23,7 +23,7 @@ class Auctioneer(Agent):
         self.reserved_price = reserved_price
         self.auctioneer_type = auctioneer_type
         self.winner = unique_id
-        self.rate = info.auctioneer_type[auctioneer_type][0]
+        self.rate = base_rate
 
         # initializations
         self.existing_bids = {}
@@ -163,10 +163,10 @@ class Auctioneer(Agent):
         if self.model.current_auction != self.model.auction_types[-1]:
             self.move_next = True
 
-    def update_auctioneer(self):
+    def update_auctioneer(self, new_base_rate):
         """ Updates the auctioneer after the first round of auctions"""
         self.move_next = False
-        self.rate = info.auctioneer_type[self.auctioneer_type][1]
+        self.rate = new_base_rate
         self.previous_bids = {}
 
         # We take the highest bid as the reserved price. This is the most the bidders were willing to pay last auction.

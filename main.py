@@ -1,7 +1,7 @@
 from auction import *
 import metrics_writer as mw
 import parameters_reader as pr
-import data_analyser as da
+import data_visualiser as da
 import time
 from datetime import datetime
 
@@ -28,8 +28,8 @@ mw.write_metrics(list_of_auctions)
 
 print("Writing took {0}".format(time.time() - end))
 
-# today = datetime.today()
-#
-# file_name = "metrics " + today.strftime('%d-%m-%y') + ".csv"
-#
-# da.visualise_data("Winner Type", "Auctioneer ROI", file_name)
+today = datetime.today()
+
+file_name = "metrics " + today.strftime('%d-%m-%y') + ".csv"
+
+da.visualise_data("Winner Type", "Auctioneer Satisfaction", file_name)

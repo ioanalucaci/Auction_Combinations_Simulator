@@ -1,5 +1,5 @@
 # Simulation
-number_of_rounds = 10
+number_of_rounds = 1000
 
 # Auction
 Number of Bidders = 100
