@@ -2,16 +2,10 @@
 Analyses the given data in terms of ANOVA test.
 """
 from scipy import stats
-from datetime import datetime
-import data_visualiser as dv
+import information_extractor as ie
 
-today = datetime.today()
-data_type = 'Winner Satisfaction'
-agent_type = 'Winner Type'
 
-file_name = "metrics " + today.strftime('%d-%m-%y') + ".csv"
-
-csv_data = dv.extract_information(file_name, agent_type, data_type)
+csv_data = ie.extract_information()
 
 # One-way ANOVA
 f_statistics, p = stats.f_oneway(csv_data['A'], csv_data['B'])
