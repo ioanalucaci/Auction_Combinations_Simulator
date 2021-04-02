@@ -47,9 +47,9 @@ class Auction(Model):
             for counter in range(number_of_bidders_type):
                 budget = random.randint(reserve_price, reserve_price * 6)
 
-                risk = random.random()
-                base_rate = random.random()
-                utility = random.random()
+                risk = random.uniform(0.000001, 1)
+                base_rate = random.uniform(0.000001, 1)
+                utility = random.uniform(0.000001, 1)
                 bidder_information = (risk, base_rate, utility)
 
                 a = Bidder(id_bidder, budget, bidder_type, bidder_information, self)
@@ -65,7 +65,7 @@ class Auction(Model):
         if len(self.auction_types) == 2:
             # Change the auction type and auctioneer information
             self.current_auction = self.auction_types[1]
-            new_base_rate = random.uniform(0, 0.1)
+            new_base_rate = random.uniform(0.000001, 0.1)
             self.auctioneer.update_auctioneer(new_base_rate)
 
             # Second auction type

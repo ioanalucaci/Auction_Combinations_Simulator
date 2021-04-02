@@ -87,7 +87,7 @@ class Auctioneer(Agent):
         if self.model.current_auction == 't4':
             self.vickrey_auction()
 
-        self.update_rate()
+        info.update_rate(self.auctioneer_type, self.rate, 1, 1)
 
         # The Dutch has a special case where the price can decrease with no bidders
         if highest_bid < self.reserved_price:
@@ -186,7 +186,3 @@ class Auctioneer(Agent):
         self.winning_bid = 0
         self.previous_highest_bid = 0
         self.previous_winner = self.unique_id
-
-    def update_rate(self):
-        """ Updates the rate based on the auctioneer's profile"""
-        self.rate = info.functions[self.auctioneer_type](self.rate, 1, 1)

@@ -3,20 +3,22 @@ import metrics_writer as mw
 import parameters_reader as pr
 import time
 
-# TODO: Look into BatchRunner
-# TODO: Look into DataCollector
-# https://mesa.readthedocs.io/en/stable/tutorials/intro_tutorial.html
 
 list_of_auctions = []
 start = time.time()
 
 number_of_rounds, parameters, bidders = pr.read_parameters()
 
-for counter in range(0, number_of_rounds):
-    model = Auction(parameters, bidders)
-    model.step()
-    list_of_auctions.append(model)
-    # print("++++++++++++++++++++++++++++++++++++++++++++++++++++")
+auctioneer_types = parameters["Auctioneer Type"]
+
+for auctioneer_type in auctioneer_types:
+    parameters["Auctioneer Type"] = auctioneer_type
+    for counter in range(0, number_of_rounds):
+        model = Auction(parameters, bidders)
+        model.step()
+        list_of_auctions.append(model)
+        # print("++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
 
 end = time.time()
 

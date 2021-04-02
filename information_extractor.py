@@ -10,7 +10,7 @@ def extract_information():
     """
     today = datetime.today()
     data_type = 'Winner Satisfaction'
-    agent_type = 'Winner Type'
+    agent_type = 'Auctioneer Type'
 
     file_name = "metrics " + today.strftime('%d-%m-%y') + ".csv"
 

@@ -27,7 +27,7 @@ def read_parameters():
         "D": 0
     }
 
-    pattern = r'((\w+ )*\w+) = ((t\d,t\d)|\d+|\w+)'
+    pattern = r'((\w+ )*\w+) = ((t\d,t\d)|([ABCD](,[ABCD])*)|\d+|\w+)'
 
     with open("auction.txt", "r") as auction_info:
 
@@ -53,8 +53,10 @@ def read_parameters():
                 continue
 
             # There are certain values that must be converted to either int or float
-            if name == 'Auctioneer Type' or name == 'Auction Types':
+            if name == 'Auction Types':
                 parameters[name] = value
+            elif name == 'Auctioneer Type':
+                parameters[name] = list(value.split(','))
             elif name == 'Number of Bidders':
                 parameters[name] = int(value)
             else:
