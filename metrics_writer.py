@@ -7,7 +7,7 @@ def write_metrics(list_of_auctions):
     Writes the metrics in a csv file
 
     :param list_of_auctions: the list of auctions to be exported in the csv file
-    :return:
+    :return: file_name: the name of the file
     """
     today = datetime.today()
 
@@ -29,3 +29,5 @@ def write_metrics(list_of_auctions):
             for header in headers:
                 to_be_published.append(auction.information[header])
             metrics_writer.writerow(to_be_published)
+
+    return file_name

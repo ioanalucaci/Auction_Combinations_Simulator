@@ -1,12 +1,14 @@
 # Simulation
-number_of_rounds = 100
+Number of Rounds = 100
+Data Type = 'Auctioneer Satisfaction'
+Agent Type = 'Winner Type'
 
 # Auction
 Number of Bidders = 100
-Auction Types = t1,t2
+Auction Types = (t1,t2)
 Reserve Price = 100
 Starting Bid = 120
-Auctioneer Type = A,B
+Auctioneer Type = A
 
 # Bidders
 A = 25
