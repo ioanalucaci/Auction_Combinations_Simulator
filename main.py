@@ -11,7 +11,7 @@ start = time.time()
 simulator, parameters, bidders = pr.read_parameters()
 
 auctioneer_types = parameters["Auctioneer Type"]
-auction_types = parameters["Auction Types"].split("),(")
+auction_types = parameters["Auction Types"].split('),(')
 
 for auctioneer_type in auctioneer_types:
     parameters["Auctioneer Type"] = auctioneer_type
@@ -23,7 +23,6 @@ for auctioneer_type in auctioneer_types:
             model = Auction(parameters, bidders)
             model.step()
             list_of_auctions.append(model)
-            # print("++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
 end = time.time()
 
@@ -39,5 +38,8 @@ types = ["A", "B", "C", "D"]
 
 if agent_type == "Auctioneer Type":
     types = auctioneer_types
+
+if agent_type == "Auction Types":
+    types = [auction_type.replace("(", "").replace(")", "") for auction_type in auction_types]
 
 da.analyse_data(file_name, data_type, agent_type, types)

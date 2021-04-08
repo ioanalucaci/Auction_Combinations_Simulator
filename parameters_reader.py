@@ -10,13 +10,10 @@ def read_parameters():
     parameters: the parameters of the auction
     bidders: the bidder types and their percentages.
     """
-    number_of_rounds = 0
-
     parameters = {
         "Number of Bidders": 0,
         "Auction Types": '',
         "Reserve Price": 0.0,
-        "Starting Bid": 0.0,
         "Auctioneer Type": ''
     }
 
@@ -34,7 +31,7 @@ def read_parameters():
         "Number of Agent Types": 0
     }
 
-    pattern = r'((\w+ )*\w+) = ((\(t\d,t\d\)(,\(t\d,t\d\))*)|([ABCD](,[ABCD])*)|\d+|\w+|(\'(\w+ )*\w+\'))'
+    pattern = r'((\w+ )*\w+) = ((\(t\d,t\d\)(,\(t\d(,t\d)*\))*)|([ABCD](,[ABCD])*)|\d+|\w+|(\'(\w+ )*\w+\'))'
 
     with open("auction.txt", "r") as auction_info:
 

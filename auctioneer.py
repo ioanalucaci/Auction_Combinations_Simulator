@@ -53,16 +53,8 @@ class Auctioneer(Agent):
         self.previous_bids = self.existing_bids
         self.existing_bids = {}
 
-        # print("-------------------------------")
-        # print(self.previous_bids)
-        # print("The auction price is {0}.".format(str(self.price)))
-        # print("Highest bid is {0} with oldest highest bid being {1}".format(self.winning_bid, self.previous_highest_bid))
-
     def decide(self, first_round):
         """ Determines whether to change the current bid or determine the winner."""
-        # print(self.existing_bids)
-        # print("--------------------------------")
-
         if len(self.existing_bids) == 0 and not first_round:
             self.determine_winner()
         else:

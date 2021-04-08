@@ -46,7 +46,7 @@ def anova_test_data(csv_data, types):
     elif len(types) == 4:
         f_statistics, p = stats.f_oneway(csv_data[types[0]], csv_data[types[1]], csv_data[types[2]], csv_data[types[3]])
 
-    print('f_statistics={0}.3f,p={1}.3f'.format(f_statistics, p))
+    print('f_statistics={0};p={1}'.format(f_statistics, p))
 
 
 def visualise_data(csv_data, types):
