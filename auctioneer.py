@@ -53,16 +53,8 @@ class Auctioneer(Agent):
         self.previous_bids = self.existing_bids
         self.existing_bids = {}
 
-        # print("-------------------------------")
-        # print(self.previous_bids)
-        # print("The auction price is {0}.".format(str(self.price)))
-        # print("Highest bid is {0} with oldest highest bid being {1}".format(self.winning_bid, self.previous_highest_bid))
-
     def decide(self, first_round):
         """ Determines whether to change the current bid or determine the winner."""
-        # print(self.existing_bids)
-        # print("--------------------------------")
-
         if len(self.existing_bids) == 0 and not first_round:
             self.determine_winner()
         else:
@@ -87,7 +79,7 @@ class Auctioneer(Agent):
         if self.model.current_auction == 't4':
             self.vickrey_auction()
 
-        self.update_rate()
+        info.update_rate(self.auctioneer_type, self.rate, 1, 1)
 
         # The Dutch has a special case where the price can decrease with no bidders
         if highest_bid < self.reserved_price:
@@ -186,7 +178,3 @@ class Auctioneer(Agent):
         self.winning_bid = 0
         self.previous_highest_bid = 0
         self.previous_winner = self.unique_id
-
-    def update_rate(self):
-        """ Updates the rate based on the auctioneer's profile"""
-        self.rate = info.functions[self.auctioneer_type](self.rate, 1, 1)

@@ -3,9 +3,25 @@ The functions used by the bidder and auctioneer types that can be changed at any
 """
 import math
 
-functions = {
-    'A': lambda rate, utility, risk: rate,
-    'B': lambda rate, utility, risk: 1 - 2 ** (- rate / (utility + risk)),
-    'C': lambda rate, utility, risk: 2 ** (- rate / (utility + risk)),
-    'D': lambda rate, utility, risk: math.sin(rate) + (utility + risk) * rate
-}
+
+def update_rate(profile, old_rate, utility, risk):
+    functions = {
+        'A': lambda rate, utility, risk: rate,
+        'B': lambda rate, utility, risk: rate * risk + utility,
+        'C': lambda rate, utility, risk: utility - rate * risk,
+        'D': lambda rate, utility, risk: math.sin(rate) + (utility + risk) * rate
+    }
+
+    new_rate = functions[profile](old_rate, utility, risk)
+
+    while new_rate > 1:
+        difference = new_rate - old_rate
+
+        difference = difference / 100
+
+        new_rate = old_rate + difference
+
+    if new_rate <= 0:
+        new_rate = old_rate - old_rate / 100
+
+    return new_rate

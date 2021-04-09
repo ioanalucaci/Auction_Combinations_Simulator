@@ -61,7 +61,7 @@ class Bidder(Agent):
         :param current_bid: The current bid of the auctioneer.
         """
         personal_bid = 0
-        self.rate = info.functions[self.bidder_type](self.rate, self.utility, self.risk)
+        self.rate = info.update_rate(self.bidder_type, self.rate, self.utility, self.risk)
 
         if self.model.current_auction == 't1':
             personal_bid = self.english_auction(current_bid)

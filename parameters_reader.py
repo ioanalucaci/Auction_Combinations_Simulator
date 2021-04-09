@@ -10,13 +10,10 @@ def read_parameters():
     parameters: the parameters of the auction
     bidders: the bidder types and their percentages.
     """
-    number_of_rounds = 0
-
     parameters = {
         "Number of Bidders": 0,
         "Auction Types": '',
         "Reserve Price": 0.0,
-        "Starting Bid": 0.0,
         "Auctioneer Type": ''
     }
 
@@ -27,7 +24,14 @@ def read_parameters():
         "D": 0
     }
 
-    pattern = r'((\w+ )*\w+) = ((t\d,t\d)|\d+|\w+)'
+    simulator = {
+        "Number of Rounds": 0,
+        "Data Type": '',
+        "Agent Type": '',
+        "Number of Agent Types": 0
+    }
+
+    pattern = r'((\w+ )*\w+) = ((\(t\d,t\d\)(,\(t\d(,t\d)*\))*)|([ABCD](,[ABCD])*)|\d+|\w+|(\'(\w+ )*\w+\'))'
 
     with open("auction.txt", "r") as auction_info:
 
@@ -48,16 +52,18 @@ def read_parameters():
                 bidders[name] = float(value)
                 continue
 
-            if name not in parameters.keys():
-                number_of_rounds = int(value)
-                continue
-
             # There are certain values that must be converted to either int or float
-            if name == 'Auctioneer Type' or name == 'Auction Types':
+            if name == 'Auction Types':
                 parameters[name] = value
+            elif name == 'Auctioneer Type':
+                parameters[name] = list(value.split(','))
             elif name == 'Number of Bidders':
                 parameters[name] = int(value)
+            elif name == "Number of Rounds" or name == "Number of Agent Types":
+                simulator[name] = int(value)
+            elif name in simulator.keys():
+                simulator[name] = value.replace('\'', '')
             else:
                 parameters[name] = float(value)
 
-        return number_of_rounds, parameters, bidders
+        return simulator, parameters, bidders
