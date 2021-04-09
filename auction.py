@@ -27,7 +27,7 @@ class Auction(Model):
 
         # Create auctioneer
         reserve_price = parameters["Reserve Price"]
-        base_rate = round(random.uniform(0.1, 0.99), 1)
+        base_rate = round(random.uniform(0.1, 0.99), 2)
         starting_bid = reserve_price * 1.2
 
         if self.current_auction == 't2':
@@ -54,9 +54,9 @@ class Auction(Model):
             for counter in range(number_of_bidders_type):
                 budget = random.randint(reserve_price * 0.6, reserve_price * 6)
 
-                risk = round(random.uniform(0.01, 0.99), 1)
-                base_rate = round(random.uniform(0.01, 0.99), 1)
-                utility = round(random.uniform(0.01, 0.99), 1)
+                risk = round(random.uniform(0.01, 0.99), 2)
+                base_rate = round(random.uniform(0.01, 0.99), 2)
+                utility = round(random.uniform(0.01, 0.99), 2)
                 bidder_information = (risk, base_rate, utility)
 
                 a = Bidder(id_bidder, budget, bidder_type, bidder_information, self)

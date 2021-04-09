@@ -12,6 +12,7 @@ simulator, parameters, bidders = pr.read_parameters()
 
 auctioneer_types = parameters["Auctioneer Type"]
 auction_types = parameters["Auction Types"].split('),(')
+file_name, headers = mw.write_metrics()
 
 for auctioneer_type in auctioneer_types:
     parameters["Auctioneer Type"] = auctioneer_type
@@ -24,13 +25,13 @@ for auctioneer_type in auctioneer_types:
             model.step()
             list_of_auctions.append(model)
 
+            if len(list_of_auctions) > 1000:
+                mw.write_simulators(file_name, list_of_auctions, headers)
+                list_of_auctions = []
+
 end = time.time()
 
 print("I am done with the models! It took {0}".format(end - start))
-
-file_name = mw.write_metrics(list_of_auctions)
-
-print("Writing took {0}".format(time.time() - end))
 
 data_type = simulator["Data Type"]
 agent_type = simulator["Agent Type"]
