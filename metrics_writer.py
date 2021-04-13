@@ -13,7 +13,7 @@ def write_metrics():
 
         # These are the headers they correspond to in terms of how the auction is coded.
         headers = ('Auction Types', 'Auctioneer Type', 'A', 'B', 'C', 'D', 'Winner Type', 'Starting Bid', 'Revenue',
-                   'Winner Satisfaction', 'Auctioneer Satisfaction', 'Round No', 'Social Welfare', 'Efficiency')
+                   'Winner Satisfaction', 'Auctioneer Satisfaction', 'Social Welfare', 'Efficiency', 'Round No')
         # First, write the table header.
         metrics_writer.writerow(headers)
     return file_name, headers

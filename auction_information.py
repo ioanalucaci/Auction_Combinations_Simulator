@@ -14,7 +14,7 @@ def update_rate(profile, old_rate, utility, risk):
 
     new_rate = functions[profile](old_rate, utility, risk)
 
-    while new_rate > 1:
+    while new_rate > 0.3:
         difference = new_rate - old_rate
 
         difference = difference / 100
@@ -22,6 +22,6 @@ def update_rate(profile, old_rate, utility, risk):
         new_rate = old_rate + difference
 
     if new_rate <= 0:
-        new_rate = old_rate - old_rate / 100
+        new_rate = old_rate - old_rate / 1000
 
-    return new_rate
+    return round(new_rate, 2)

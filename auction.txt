@@ -1,12 +1,12 @@
 # Simulation
-Number of Rounds = 10000
-Data Type = 'Efficiency'
+Number of Rounds = 100
+Data Type = 'Revenue'
 Agent Type = 'Auction Types'
 
 # Auction
 Number of Bidders = 100
-Auction Types = (t1,t2),(t1),(t2)
-Reserve Price = 100
+Auction Types = (t1,t2),(t2,t1),(t2),(t1)
+Reserve Price = 2000
 Auctioneer Type = A,B,C,D
 
 # Bidders

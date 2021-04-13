@@ -11,7 +11,7 @@ from auctioneer import Auctioneer
 class Auction(Model):
     """Model that simulates an auction situation. Used to dictate the communication between auctioneers and bidders."""
 
-    def __init__(self, parameters, bidder_types):
+    def __init__(self, parameters, bidder_types, agents_factory):
         """
         Initialisation function for the auction model.
 
@@ -26,58 +26,43 @@ class Auction(Model):
         self.current_auction = self.auction_types[0]
 
         # Create auctioneer
-        reserve_price = parameters["Reserve Price"]
-        base_rate = round(random.uniform(0.1, 0.99), 2)
-        starting_bid = reserve_price * 1.2
+        auct_info = agents_factory.auctioneer
 
-        if self.current_auction == 't2':
-            starting_bid = reserve_price * 5
+        self.information["Starting Bid"] = auct_info["starting_bid"]
 
-        self.information["Starting Bid"] = starting_bid
-
-        self.auctioneer = Auctioneer(-1, starting_bid, reserve_price, parameters["Auctioneer Type"],
-                                     base_rate, self)
+        self.auctioneer = Auctioneer(-1, auct_info["starting_bid"], auct_info["reserve_price"], parameters["Auctioneer Type"],
+                                     auct_info["base_rate"], self)
 
         # Create bidders
-        self.number_of_bidders = parameters["Number of Bidders"]
         self.bid_schedule = SimultaneousActivation(self)
 
         self.rounds = 0
 
-        id_bidder = 0
-
-        # For every type, we see how many we have to create
-        for bidder_type in bidder_types.keys():
-            number_of_bidders_type = int(bidder_types[bidder_type] * self.number_of_bidders / 100)
-
-            # We create the number of bidders for a specific type
-            for counter in range(number_of_bidders_type):
-                budget = random.randint(reserve_price * 0.6, reserve_price * 6)
-
-                risk = round(random.uniform(0.01, 0.99), 2)
-                base_rate = round(random.uniform(0.01, 0.99), 2)
-                utility = round(random.uniform(0.01, 0.99), 2)
-                bidder_information = (risk, base_rate, utility)
-
-                a = Bidder(id_bidder, budget, bidder_type, bidder_information, self)
-                self.bid_schedule.add(a)
-                id_bidder = id_bidder + 1
+        bidders_info = agents_factory.bidders
+        for counter in range(0, len(bidders_info)):
+            bidder_info = bidders_info[counter]
+            bidder = Bidder(counter, bidder_info["budget"], bidder_info["bidder_type"], bidder_info["bidder_information"], self)
+            self.bid_schedule.add(bidder)
 
     def step(self):
         """ Simulates an auction or combination of auctions."""
-
         # First auction type
+        #print("start")
+        #print(self.current_auction)
         self.select_auction_type()
 
         if len(self.auction_types) == 2:
             # Change the auction type and auctioneer information
             self.current_auction = self.auction_types[1]
-            new_base_rate = round(random.uniform(0.01, 0.1), 2)
+            new_base_rate = round(random.uniform(0.01, 0.05), 2)
             self.auctioneer.update_auctioneer(new_base_rate)
+
+            #print(self.current_auction)
 
             # Second auction type
             self.select_auction_type()
-
+        #print(self.auctioneer.winning_bid)
+        #print("----------------")
         # Update information
         self.update_metrics()
 
@@ -110,16 +95,16 @@ class Auction(Model):
         if self.auctioneer.winner == -1 or self.auctioneer.winning_bid < self.information['Reserve Price']:
             # No Winner
             self.information['Winner Type'] = 'auctioneer'
-            self.information['Revenue'] = self.information['Starting Bid']
+            self.information['Revenue'] = - self.information['Reserve Price']
             self.information['Winner Satisfaction'] = 0
-            self.information['Auctioneer Satisfaction'] = 0
+            self.information['Auctioneer Satisfaction'] = -1
             self.information['Efficiency'] = 0
         else:
             # There is a winner
             winning_bidder = \
                 list(filter(lambda bidder: bidder.unique_id == self.auctioneer.winner, self.bid_schedule.agents))
             self.information['Winner Type'] = winning_bidder[0].bidder_type
-            self.information['Revenue'] = self.auctioneer.winning_bid
+            self.information['Revenue'] = self.auctioneer.winning_bid - self.information["Reserve Price"]
 
             self.information['Winner Satisfaction'] = (winning_bidder[
                                                            0].budget - self.auctioneer.winning_bid) / self.auctioneer.winning_bid
@@ -129,5 +114,5 @@ class Auction(Model):
                 (self.information['Winner Satisfaction'] - self.information['Auctioneer Satisfaction'])) / self.rounds
 
         # Extra Metrics
-        self.information['Social Welfare'] = self.auctioneer.winning_bid / len(self.bid_schedule.agents)
+        self.information['Social Welfare'] = self.information['Revenue'] / len(self.bid_schedule.agents)
         self.information['Round No'] = self.rounds

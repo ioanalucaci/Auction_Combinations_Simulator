@@ -31,7 +31,7 @@ def read_parameters():
         "Number of Agent Types": 0
     }
 
-    pattern = r'((\w+ )*\w+) = ((\(t\d,t\d\)(,\(t\d(,t\d)*\))*)|([ABCD](,[ABCD])*)|\d+|\w+|(\'(\w+ )*\w+\'))'
+    pattern = r'((\w+ )*\w+) = ((\(t\d(,t\d){0,1}\)(,\(t\d(,t\d)*\))*)|([ABCD](,[ABCD])*)|\d+|\w+|(\'(\w+ )*\w+\'))'
 
     with open("auction.txt", "r") as auction_info:
 

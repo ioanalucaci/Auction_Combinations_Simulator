@@ -55,10 +55,12 @@ class Auctioneer(Agent):
 
     def decide(self, first_round):
         """ Determines whether to change the current bid or determine the winner."""
-        if len(self.existing_bids) == 0 and not first_round:
+        if len(self.existing_bids) == 0 and not first_round and self.model.current_auction != 't2':
             self.determine_winner()
         else:
             self.change_current_bid()
+
+        #print("current stat", self.winning_bid, self.price, self.rate)
 
     def change_current_bid(self):
         """ Determines how to change the current bid based on the auction type."""
@@ -79,7 +81,7 @@ class Auctioneer(Agent):
         if self.model.current_auction == 't4':
             self.vickrey_auction()
 
-        info.update_rate(self.auctioneer_type, self.rate, 1, 1)
+        self.rate = info.update_rate(self.auctioneer_type, self.rate, 1, 1)
 
         # The Dutch has a special case where the price can decrease with no bidders
         if highest_bid < self.reserved_price:
@@ -95,21 +97,16 @@ class Auctioneer(Agent):
 
     def determine_winner(self):
         """ Determines the winner and how much they have to pay."""
+        previous_bids_max = max(self.previous_bids.values()) if len(self.previous_bids) > 0 else 0
 
-        # There are times where there are no bids and we only have to run the Dutch auction again
-        if self.model.current_auction == 't2' and len(self.previous_bids) == len(self.existing_bids) == 0:
-            self.dutch_auction(0)
-        else:
-            previous_bids_max = max(self.previous_bids.values()) if len(self.previous_bids) > 0 else 0
+        if self.reserved_price < previous_bids_max and self.winning_bid < previous_bids_max:
+            self.winner = list(self.previous_bids.keys())[0]
+            self.winning_bid = self.previous_bids[self.winner]
+        elif self.previous_winner != self.unique_id and self.winning_bid < self.previous_highest_bid:
+            self.winner = self.previous_winner
+            self.winning_bid = self.previous_highest_bid
 
-            if self.reserved_price < previous_bids_max and self.winning_bid < previous_bids_max:
-                self.winner = list(self.previous_bids.keys())[0]
-                self.winning_bid = self.previous_bids[self.winner]
-            elif self.previous_winner != self.unique_id and self.winning_bid < self.previous_highest_bid:
-                self.winner = self.previous_winner
-                self.winning_bid = self.previous_highest_bid
-
-            self.move_next = True
+        self.move_next = True
 
     def english_auction(self, highest_bid):
         """ Simulates an English auction. We take the highest current bid and add the rate to it."""
@@ -143,7 +140,6 @@ class Auctioneer(Agent):
         Simulates a Vickrey auction. Since it's one-shot, we only need the winner, but the price it'll pay will be
         the second highest bid.
         """
-
         self.existing_bids = dict(sorted(self.existing_bids.items(), key=lambda item: item[1], reverse=True))
         self.winner = list(self.existing_bids.keys())[0]
 
@@ -169,12 +165,6 @@ class Auctioneer(Agent):
 
         if self.model.auction_types[-1] == 't2':
             self.reserved_price = max(self.winning_bid, self.previous_highest_bid)
-            self.price = self.price * (1 - self.rate)
 
         if self.model.auction_types[0] in ['t3', 't4']:
             self.price = self.reserved_price
-
-        self.winner = self.unique_id
-        self.winning_bid = 0
-        self.previous_highest_bid = 0
-        self.previous_winner = self.unique_id

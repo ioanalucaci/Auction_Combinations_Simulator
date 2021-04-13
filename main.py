@@ -3,7 +3,7 @@ import metrics_writer as mw
 import parameters_reader as pr
 import data_analyser as da
 import time
-
+from agents_factory import AgentsFactory
 
 list_of_auctions = []
 start = time.time()
@@ -14,20 +14,29 @@ auctioneer_types = parameters["Auctioneer Type"]
 auction_types = parameters["Auction Types"].split('),(')
 file_name, headers = mw.write_metrics()
 
-for auctioneer_type in auctioneer_types:
-    parameters["Auctioneer Type"] = auctioneer_type
+for counter in range(0, simulator["Number of Rounds"]):
+    agents_factory = AgentsFactory(parameters, bidders)
 
-    for auction_combination in auction_types:
-        parameters["Auction Types"] = auction_combination.replace('(', '').replace(')', '')
+    for auctioneer_type in auctioneer_types:
+        parameters["Auctioneer Type"] = auctioneer_type
 
-        for counter in range(0, simulator["Number of Rounds"]):
-            model = Auction(parameters, bidders)
+        agents_factory.create_auctioneer(parameters)
+
+        for auction_combination in auction_types:
+            parameters["Auction Types"] = auction_combination.replace('(', '').replace(')', '')
+
+            agents_factory.update_prices(parameters["Auction Types"])
+
+            model = Auction(parameters, bidders, agents_factory)
             model.step()
             list_of_auctions.append(model)
 
-            if len(list_of_auctions) > 1000:
-                mw.write_simulators(file_name, list_of_auctions, headers)
-                list_of_auctions = []
+    if len(list_of_auctions) > 500:
+        mw.write_simulators(file_name, list_of_auctions, headers)
+        list_of_auctions = []
+
+if len(list_of_auctions) > 0:
+    mw.write_simulators(file_name, list_of_auctions, headers)
 
 end = time.time()
 
