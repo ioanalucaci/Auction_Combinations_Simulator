@@ -67,7 +67,7 @@ class AgentsFactory:
         starting_bid = reserve_price * (1 + base_rate)
 
         if current_auction == 't2':
-            multiplier = round(random.uniform(1.3, 2), 1)
+            multiplier = round(random.uniform(1.1, 2), 1)
             starting_bid = reserve_price * (multiplier + base_rate)
 
         if current_auction == 't1':

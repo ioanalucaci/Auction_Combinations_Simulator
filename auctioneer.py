@@ -13,8 +13,10 @@ class Auctioneer(Agent):
         Initialisation function for the auctioneer model.
 
         :param unique_id: the id of the auctioneer
-        :param price: the reserved price
+        :param price: the starting price price
+        :param reserved_price: the reserved price
         :param auctioneer_type: the type of the auctioneer
+        :param base_rate: the starting rate
         :param model: the auction model it belongs to
         """
         super().__init__(unique_id, model)
@@ -120,10 +122,13 @@ class Auctioneer(Agent):
         # If we reached below the reserved price, we exit
         if self.reserved_price > price:
             self.move_next = True
+            #print("decision - move next")
         # If we're in the risk of raising the price or going below what the winning bid currently is, determine winner
         elif self.price < price or price < self.winning_bid:
+            #print("decision - determine winner", price)
             self.determine_winner()
         else:
+            #print("decision - new price ", self.price, price)
             self.price = price
 
     def sealedbid_auction(self):

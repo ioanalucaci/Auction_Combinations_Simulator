@@ -1,8 +1,8 @@
 """
 The bidder class for the simulation.
 """
-from mesa import Agent
 import random
+from mesa import Agent
 import auction_information as info
 
 
@@ -16,6 +16,7 @@ class Bidder(Agent):
         :param unique_id: the id of the bidder
         :param budget: the bidder's budget
         :param bidder_type: the type of the bidder
+        :param bidder_information: tuple containing risk, base rate and utility
         :param model: the auction model it belongs to
         """
         super().__init__(unique_id, model)

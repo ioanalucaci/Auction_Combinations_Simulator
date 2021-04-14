@@ -5,6 +5,15 @@ import math
 
 
 def update_rate(profile, old_rate, utility, risk):
+    """
+    Updates the rate of the agent.
+
+    :param profile: the agent's profile.
+    :param old_rate: the previous rate
+    :param utility: the utility
+    :param risk: the risk
+    :return: the new rate
+    """
     functions = {
         'A': lambda rate, utility, risk: rate,
         'B': lambda rate, utility, risk: rate * risk + utility,
