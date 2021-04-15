@@ -54,6 +54,7 @@ class Auction(Model):
         if len(self.auction_types) == 2:
             # Change the auction type and auctioneer information
             self.current_auction = self.auction_types[1]
+
             new_base_rate = round(random.uniform(0.01, 0.05), 2)
             self.auctioneer.update_auctioneer(new_base_rate)
 
@@ -98,7 +99,7 @@ class Auction(Model):
             self.information['Revenue'] = - self.information['Reserve Price']
             self.information['Winner Satisfaction'] = 0
             self.information['Auctioneer Satisfaction'] = -1
-            self.information['Efficiency'] = 0
+            self.information['Efficiency'] = -1 / self.rounds
         else:
             # There is a winner
             winning_bidder = \

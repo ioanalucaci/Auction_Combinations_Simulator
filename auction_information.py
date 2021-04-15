@@ -23,14 +23,14 @@ def update_rate(profile, old_rate, utility, risk):
 
     new_rate = functions[profile](old_rate, utility, risk)
 
-    while new_rate > 0.3:
-        difference = new_rate - old_rate
-
-        difference = difference / 100
+    while new_rate > 0.1:
+        difference = (new_rate - old_rate) / 100
 
         new_rate = old_rate + difference
 
-    if new_rate <= 0:
-        new_rate = old_rate - old_rate / 1000
+    while new_rate <= 0:
+        difference = old_rate / 100
 
-    return round(new_rate, 2)
+        new_rate = old_rate - difference
+
+    return new_rate

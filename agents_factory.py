@@ -46,7 +46,7 @@ class AgentsFactory:
         """
         # Create auctioneer
         reserve_price = parameters["Reserve Price"]
-        base_rate = round(random.uniform(0.05, 0.3), 2)
+        base_rate = round(random.uniform(0.05, 0.1), 2)
 
         self.auctioneer = {"starting_bid": 0, "reserve_price": reserve_price,
                            "auctioneer_type": parameters["Auctioneer Type"],
@@ -67,11 +67,11 @@ class AgentsFactory:
         starting_bid = reserve_price * (1 + base_rate)
 
         if current_auction == 't2':
-            multiplier = round(random.uniform(1.1, 2), 1)
+            multiplier = round(random.uniform(1.3, 2), 1)
             starting_bid = reserve_price * (multiplier + base_rate)
 
         if current_auction == 't1':
-            multiplier = round(random.uniform(1, 1.03), 1)
+            multiplier = round(random.uniform(1, 1.1), 1)
             starting_bid = reserve_price * multiplier
 
         self.auctioneer["starting_bid"] = starting_bid
