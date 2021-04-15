@@ -33,7 +33,7 @@ def read_parameters(headers):
         "Agent Type": None
     }
 
-    pattern = r'((\w+ )*\w+) = ((\(t[1234](,t[1234]){0,1}\)(,\(t[1234](,t[1234])*\))*)|([ABCD](,[ABCD])*)|\d+|(\'(\w+ )*\w+\'))'
+    pattern = r'((\w+ )*\w+) = ((\(t[1234](,t[1234]){0,1}\)(,\(t[1234](,t[1234])*\))*)|([ABCD](,[ABCD])*)|\d+|(\'(\w+ )*\w+\')(,\'(\w+ )*\w+\')*)'
 
     # Populate the dictionaries that need to be returned
     with open("auction.txt", "r") as auction_info:
@@ -94,7 +94,11 @@ def read_parameters(headers):
         raise Exception("Bidders percentages must add up to 100.")
 
     # Check that we will look for data for the graphs that exists in the file.
-    if simulator['Data Type'] not in headers or simulator['Agent Type'] not in headers:
-        raise Exception("Agent and/or Data type not present in the csv file.")
+    for agent_type in simulator['Agent Type'].split(','):
+        if agent_type not in headers:
+            raise Exception("Agent type {0} not present in the csv file.".format(agent_type))
+    for data_type in simulator['Data Type'].split(','):
+        if data_type not in headers:
+            raise Exception("Data type {0} not present in the csv file.".format(data_type))
 
     return simulator, parameters, bidders

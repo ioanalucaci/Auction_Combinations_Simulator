@@ -57,12 +57,12 @@ print("I am done with the models! It took {0}".format(end - start))
 # Since the data can be simulated from different aspects, we need to make sure the labels for the agents will be correct
 data_type = simulator["Data Type"]
 agent_type = simulator["Agent Type"]
-types = ["A", "B", "C", "D"]
+types = {"Winner Type": ["A", "B", "C", "D"]}
 
-if agent_type == "Auctioneer Type":
-    types = auctioneer_types
+if "Auctioneer Type" in agent_type:
+    types["Auctioneer Type"] = auctioneer_types
 
-if agent_type == "Auction Types":
-    types = [auction_type.replace("(", "").replace(")", "") for auction_type in auction_types]
+if "Auction Types" in agent_type:
+    types["Auction Types"] = [auction_type.replace("(", "").replace(")", "") for auction_type in auction_types]
 
-da.analyse_data(file_name, data_type, agent_type, types)
+da.analyse_data(file_name, list(data_type.split(',')), list(agent_type.split(',')), types)

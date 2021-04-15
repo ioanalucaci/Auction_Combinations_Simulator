@@ -30,7 +30,8 @@ class Auction(Model):
 
         self.information["Starting Bid"] = auct_info["starting_bid"]
 
-        self.auctioneer = Auctioneer(-1, auct_info["starting_bid"], auct_info["reserve_price"], parameters["Auctioneer Type"],
+        self.auctioneer = Auctioneer(-1, auct_info["starting_bid"], auct_info["reserve_price"],
+                                     parameters["Auctioneer Type"],
                                      auct_info["base_rate"], self)
 
         # Create bidders
@@ -41,14 +42,15 @@ class Auction(Model):
         bidders_info = agents_factory.bidders
         for counter in range(0, len(bidders_info)):
             bidder_info = bidders_info[counter]
-            bidder = Bidder(counter, bidder_info["budget"], bidder_info["bidder_type"], bidder_info["bidder_information"], self)
+            bidder = Bidder(counter, bidder_info["budget"], bidder_info["bidder_type"],
+                            bidder_info["bidder_information"], self)
             self.bid_schedule.add(bidder)
 
     def step(self):
         """ Simulates an auction or combination of auctions."""
         # First auction type
-        #print("start")
-        #print(self.current_auction)
+        # print("start")
+        # print(self.current_auction)
         self.select_auction_type()
 
         if len(self.auction_types) == 2:
@@ -58,12 +60,12 @@ class Auction(Model):
             new_base_rate = round(random.uniform(0.01, 0.05), 2)
             self.auctioneer.update_auctioneer(new_base_rate)
 
-            #print(self.current_auction)
+            # print(self.current_auction)
 
             # Second auction type
             self.select_auction_type()
-        #print(self.auctioneer.winning_bid)
-        #print("----------------")
+        # print(self.auctioneer.winning_bid)
+        # print("----------------")
         # Update information
         self.update_metrics()
 
