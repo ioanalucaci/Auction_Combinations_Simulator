@@ -13,7 +13,7 @@ def write_metrics(headers):
 
     file_name = "metrics " + today.strftime('%d-%m-%y') + ".csv"
 
-    with open(file_name, mode='w+') as metrics_file:
+    with open(file_name, mode='w+', newline='') as metrics_file:
         metrics_writer = csv.writer(metrics_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         # First, write the table header.
@@ -29,7 +29,7 @@ def write_simulators(file_name, list_of_auctions, headers):
     :param file_name: the name of the file.
     :param list_of_auctions: the list of auctions to be exported in the csv file
     """
-    with open(file_name, mode='a') as metrics_file:
+    with open(file_name, mode='a', newline='') as metrics_file:
         metrics_writer = csv.writer(metrics_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         # Then, for each auction, extract the information

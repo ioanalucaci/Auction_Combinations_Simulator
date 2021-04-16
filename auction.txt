@@ -1,5 +1,5 @@
 # Simulation
-Number of Rounds = 100
+Number of Rounds = 100000
 Data Type = 'Efficiency','Social Welfare','Revenue'
 Agent Type = 'Auction Types'
 

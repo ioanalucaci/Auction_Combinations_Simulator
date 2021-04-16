@@ -25,7 +25,7 @@ class AgentsFactory:
             for counter in range(number_of_bidders_type):
                 budget = 0
 
-                risk = round(random.uniform(0.1, 0.99), 1)
+                risk = round(random.uniform(0.1, 0.9), 1)
                 base_rate = round(random.uniform(0.01, 0.1), 2)
                 utility = round(random.uniform(0.1, 0.99), 1)
                 bidder_information = (risk, base_rate, utility)
