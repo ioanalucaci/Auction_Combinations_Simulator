@@ -5,7 +5,7 @@ Agent Type = 'Auction Types'
 
 # Auction
 Number of Bidders = 100
-Auction Types = (t1,t2),(t2,t1),(t1),(t2)
+Auction Types = (t2,t4),(t4,t2),(t2),(t4)
 Reserve Price = 2000
 Auctioneer Type = A,B,C,D
 

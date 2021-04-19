@@ -1,6 +1,7 @@
 """
 The auctioneer class for the simulation.
 """
+import random
 from mesa import Agent
 import auction_information as info
 
@@ -168,8 +169,10 @@ class Auctioneer(Agent):
         if self.model.auction_types[0] == 't2':
             self.price = self.reserved_price * (1 + self.rate)
 
-        if self.model.auction_types[-1] == 't2':
-            self.reserved_price = max(self.winning_bid, self.previous_highest_bid)
-
         if self.model.auction_types[0] in ['t3', 't4']:
             self.price = self.reserved_price
+
+        if self.model.auction_types[-1] == 't2':
+            self.reserved_price = max(self.winning_bid, self.previous_highest_bid)
+            multiplier = round(random.uniform(1.3, 2), 1)
+            self.price = self.reserved_price * multiplier
