@@ -18,7 +18,7 @@ def update_rate(profile, old_rate, utility, risk):
         'A': lambda rate, utility, risk: rate,
         'B': lambda rate, utility, risk: rate * risk + utility,
         'C': lambda rate, utility, risk: utility - rate * risk,
-        'D': lambda rate, utility, risk: math.sin(rate) + (utility + risk) * rate
+        'D': lambda rate, utility, risk: math.sin(rate) + (utility + risk)
     }
 
     new_rate = functions[profile](old_rate, utility, risk)
