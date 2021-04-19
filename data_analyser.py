@@ -6,26 +6,29 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def analyse_data(file_name, data_type, agent_type, types):
+def analyse_data(file_name, data_types, agent_types, types):
     """
     Analyses the data in terms of ANOVA tests and visualisation.
 
     :param file_name: the file name to be analysed
-    :param data_type: the metric to be analysed
-    :param agent_type: the agent type to be analysed
+    :param data_types: the metric to be analysed
+    :param agent_types: the agent type to be analysed
     :param types: the types that can be found in the file for the agent type
     :return:
     """
     metrics_data = pd.read_csv(file_name)
-    csv_data = {}
 
-    # Separating the data based on the winner type and extracting only what's important
-    for element_type in types:
-        csv_data[element_type] = list(metrics_data[data_type][metrics_data[agent_type] == element_type])
+    for agent_type in agent_types:
+        for data_type in data_types:
+            csv_data = {}
+            # Separating the data based on the winner type and extracting only what's important
+            for element_type in types[agent_type]:
+                csv_data[element_type] = list(metrics_data[data_type][metrics_data[agent_type] == element_type])
 
-    visualise_data(csv_data, types, data_type, agent_type)
+            visualise_data(csv_data, types[agent_type], data_type, agent_type)
 
-    anova_test_data(csv_data, types)
+            print("Anova test for {0} agent types separated by {1} data type".format(agent_type, data_type))
+            anova_test_data(csv_data, types[agent_type])
 
 
 def anova_test_data(csv_data, types):
@@ -69,7 +72,7 @@ def visualise_data(csv_data, types, data_type, agent_type):
     data_to_bar_plot = pd.DataFrame({agent_type: types, data_type: data_for_bar})
 
     # Shows a histogram
-    data_to_plot.plot.hist()
+    # data_to_plot.plot.hist()
 
     # Shows a Bell Curve
     data_to_plot.plot.kde()
