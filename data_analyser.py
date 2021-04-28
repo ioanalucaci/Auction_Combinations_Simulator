@@ -71,9 +71,6 @@ def visualise_data(csv_data, types, data_type, agent_type):
     data_to_plot = pd.DataFrame(data_for_frame)
     data_to_bar_plot = pd.DataFrame({agent_type: types, data_type: data_for_bar})
 
-    # Shows a histogram
-    # data_to_plot.plot.hist()
-
     # Shows a Bell Curve
     data_to_plot.plot.kde()
 
