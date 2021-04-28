@@ -49,8 +49,6 @@ class Auction(Model):
     def step(self):
         """ Simulates an auction or combination of auctions."""
         # First auction type
-        # print("start")
-        # print(self.current_auction)
         self.select_auction_type()
 
         if len(self.auction_types) == 2:
@@ -60,12 +58,9 @@ class Auction(Model):
             new_base_rate = round(random.uniform(0.01, 0.05), 2)
             self.auctioneer.update_auctioneer(new_base_rate)
 
-            # print(self.current_auction)
-
             # Second auction type
             self.select_auction_type()
-        # print(self.auctioneer.winning_bid)
-        # print("----------------")
+
         # Update information
         self.update_metrics()
 
@@ -118,4 +113,4 @@ class Auction(Model):
 
         # Extra Metrics
         self.information['Social Welfare'] = self.information['Revenue'] / len(self.bid_schedule.agents)
-        self.information['Round No'] = self.rounds
+        self.information['Speed'] = self.rounds

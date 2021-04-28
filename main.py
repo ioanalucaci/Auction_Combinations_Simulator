@@ -9,7 +9,7 @@ list_of_auctions = []
 
 # These are the headers they correspond to in terms of how the auction is coded.
 headers = ('Auction Types', 'Auctioneer Type', 'A', 'B', 'C', 'D', 'Winner Type', 'Starting Bid', 'Revenue',
-           'Winner Satisfaction', 'Auctioneer Satisfaction', 'Social Welfare', 'Efficiency', 'Round No')
+           'Winner Satisfaction', 'Auctioneer Satisfaction', 'Social Welfare', 'Efficiency', 'Speed')
 
 # Get the information from the .txt file
 simulator, parameters, bidders = pr.read_parameters(headers)

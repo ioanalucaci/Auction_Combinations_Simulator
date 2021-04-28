@@ -27,8 +27,10 @@ def analyse_data(file_name, data_types, agent_types, types):
 
             visualise_data(csv_data, types[agent_type], data_type, agent_type)
 
-            print("Anova test for {0} agent types separated by {1} data type".format(agent_type, data_type))
+            print("----------------------------------------------------------")
+            print("ANOVA test for '{1}' in terms of '{0}':".format(agent_type, data_type))
             anova_test_data(csv_data, types[agent_type])
+            print("----------------------------------------------------------")
 
 
 def anova_test_data(csv_data, types):
@@ -48,7 +50,7 @@ def anova_test_data(csv_data, types):
     elif len(types) == 4:
         f_statistics, p = stats.f_oneway(csv_data[types[0]], csv_data[types[1]], csv_data[types[2]], csv_data[types[3]])
 
-    print('f_statistics={0};p={1}'.format(f_statistics, p))
+    print('f_statistics={0}; p={1}'.format(f_statistics, p))
 
 
 def visualise_data(csv_data, types, data_type, agent_type):
@@ -66,7 +68,7 @@ def visualise_data(csv_data, types, data_type, agent_type):
 
     for element in types:
         data_for_frame[element] = csv_data[element]
-        data_for_bar.append(sum(csv_data[element])/len(csv_data[element]))
+        data_for_bar.append(sum(csv_data[element]) / len(csv_data[element]))
 
     data_to_plot = pd.DataFrame(data_for_frame)
     data_to_bar_plot = pd.DataFrame({agent_type: types, data_type: data_for_bar})
