@@ -33,7 +33,7 @@ def read_parameters(headers):
         "Agent Type": None
     }
 
-    pattern = r'((\w+ )*\w+) = ((\(t[1234](,t[1234]){0,1}\)(,\(t[1234](,t[1234])*\))*)|([ABCD](,[ABCD])*)|\d+|(\'(\w+ )*\w+\')(,\'(\w+ )*\w+\')*)'
+    pattern = r'((\w+ )*\w+) = (([EDVF]{1,2}(,[EDVF]{1,2})*)|([ABCD](,[ABCD])*)|\d+|(\'(\w+ )*\w+\')(,\'(\w+ )*\w+\')*)'
 
     # Populate the dictionaries that need to be returned
     with open("auction.txt", "r") as auction_info:

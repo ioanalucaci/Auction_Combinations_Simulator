@@ -43,7 +43,7 @@ class Bidder(Agent):
         :returns: True if it decides to bid; otherwise False
         """
         # If it's a one-shot, then the bidder has to send a bid
-        if self.model.current_auction in ['t3', 't4']:
+        if self.model.current_auction in ['F', 'V']:
             return True
 
         if current_bid > self.budget:
@@ -64,13 +64,13 @@ class Bidder(Agent):
         personal_bid = 0
         self.rate = info.update_rate(self.bidder_type, self.rate, self.utility, self.risk)
 
-        if self.model.current_auction == 't1':
+        if self.model.current_auction == 'E':
             personal_bid = self.english_auction(current_bid)
-        elif self.model.current_auction == 't2':
+        elif self.model.current_auction == 'D':
             personal_bid = self.dutch_auction(current_bid)
-        elif self.model.current_auction == 't3':
+        elif self.model.current_auction == 'F':
             personal_bid = self.sealedbid_auction()
-        elif self.model.current_auction == 't4':
+        elif self.model.current_auction == 'V':
             personal_bid = self.vickrey_auction()
 
         if personal_bid > 0:

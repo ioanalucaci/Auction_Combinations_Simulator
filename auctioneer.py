@@ -49,7 +49,7 @@ class Auctioneer(Agent):
             self.existing_bids = dict(sorted(self.existing_bids.items(), key=lambda item: item[1], reverse=True))
 
             # We update the current 'winner' only if it's higher than the current price or we're in a Dutch auction
-            if self.price < max(self.existing_bids.values()) or self.model.current_auction == 't2':
+            if self.price < max(self.existing_bids.values()) or self.model.current_auction == 'D':
                 self.winner = list(self.existing_bids.keys())[0]
                 self.winning_bid = self.existing_bids[list(self.existing_bids.keys())[0]]
 
@@ -58,12 +58,10 @@ class Auctioneer(Agent):
 
     def decide(self, first_round):
         """ Determines whether to change the current bid or determine the winner."""
-        if len(self.existing_bids) == 0 and not first_round and self.model.current_auction != 't2':
+        if len(self.existing_bids) == 0 and not first_round and self.model.current_auction != 'D':
             self.determine_winner()
         else:
             self.change_current_bid()
-
-        #print("current stat", self.winning_bid, self.price, self.rate)
 
     def change_current_bid(self):
         """ Determines how to change the current bid based on the auction type."""
@@ -79,23 +77,23 @@ class Auctioneer(Agent):
             self.winning_bid = highest_bid
 
         # After that, we choose which function is best for the auction type
-        if self.model.current_auction == 't3':
+        if self.model.current_auction == 'F':
             self.sealedbid_auction()
-        if self.model.current_auction == 't4':
+        if self.model.current_auction == 'V':
             self.vickrey_auction()
 
         self.rate = info.update_rate(self.auctioneer_type, self.rate, 1, 1)
 
         # The Dutch has a special case where the price can decrease with no bidders
         if highest_bid < self.reserved_price:
-            if self.model.current_auction == 't2':
+            if self.model.current_auction == 'D':
                 self.dutch_auction(highest_bid)
             else:
                 self.determine_winner()
         else:
-            if self.model.current_auction == 't1':
+            if self.model.current_auction == 'E':
                 self.english_auction(highest_bid)
-            elif self.model.current_auction == 't2':
+            elif self.model.current_auction == 'D':
                 self.dutch_auction(highest_bid)
 
     def determine_winner(self):
@@ -123,13 +121,10 @@ class Auctioneer(Agent):
         # If we reached below the reserved price, we exit
         if self.reserved_price > price:
             self.move_next = True
-            #print("decision - move next")
         # If we're in the risk of raising the price or going below what the winning bid currently is, determine winner
         elif self.price < price or price < self.winning_bid:
-            #print("decision - determine winner", price)
             self.determine_winner()
         else:
-            #print("decision - new price ", self.price, price)
             self.price = price
 
     def sealedbid_auction(self):
@@ -166,13 +161,13 @@ class Auctioneer(Agent):
         # We take the highest bid as the reserved price. This is the most the bidders were willing to pay last auction.
         self.reserved_price = max(self.winning_bid, self.previous_highest_bid, self.price)
 
-        if self.model.auction_types[0] == 't2':
+        if self.model.auction_types[0] == 'D':
             self.price = self.reserved_price * (1 + self.rate)
 
-        if self.model.auction_types[0] in ['t3', 't4']:
+        if self.model.auction_types[0] in ['F', 'V']:
             self.price = self.reserved_price
 
-        if self.model.auction_types[-1] == 't2':
+        if self.model.auction_types[-1] == 'D':
             self.reserved_price = max(self.winning_bid, self.previous_highest_bid)
             multiplier = round(random.uniform(1.3, 2), 1)
             self.price = self.reserved_price * multiplier

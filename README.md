@@ -2,27 +2,32 @@
 
 This is the code section for my final project.
 
-### Notation meanings:
+## Notation meanings:
 
-###### Auction
+### Auction
 There are 4 types of auctions that can be combined:
-- T1 - English
-- T2 - Dutch
-- T3 - First-price sealed-bid
-- T4 - Vickrey
+- E - English
+- D - Dutch
+- F - First-price sealed-bid
+- V - Vickrey
 
-###### Auctioneer
-The auctioneer has, at the moment, two rates: the first auction rate and the second auction rate. This can be seen in auction_information.py
+### Auctioneer
+The auctioneer has, at the moment, two rates: the first auction rate, and the second auction rate. 
+This can be seen in *agents_factory.py*
 
-##### Bidder
+### Bidder
 The bidder has three parameters:
-- risk
-- base rate
-- utility
+- **risk** - value between 0 and 1
+- **utility** - value between 0 and 1
+- **base rate** - value between 0 and 0.1
 
-##### Functions
+These parameters are randomly constructed in *agents_factory.py*
+
+### Functions
 There are 4 functions connected to 4 profiles at the moment:
-- *a* : constant function
-- *b* : increasing function
-- *c* : decreasing function
-- *d* : non-monotonous function
+- *A* : constant function
+- *B* : increasing function
+- *C* : decreasing function
+- *D* : non-monotonous function
+
+These functions can be changed in *auction_information.py*

@@ -4,6 +4,7 @@ Analyses the given data in terms of ANOVA test and visualises it.
 from scipy import stats
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def analyse_data(file_name, data_types, agent_types, types):
@@ -73,8 +74,16 @@ def visualise_data(csv_data, types, data_type, agent_type):
     data_to_plot = pd.DataFrame(data_for_frame)
     data_to_bar_plot = pd.DataFrame({agent_type: types, data_type: data_for_bar})
 
-    # Shows a Bell Curve
-    data_to_plot.plot.kde()
+    # Shows a Box with whiskers
+    boxplot = sns.boxplot(x='variable', y='value', data=pd.melt(data_to_plot), order=data_for_frame.keys())
+
+    boxplot.set_xlabel("", fontsize=16)
+    boxplot.set_ylabel("", fontsize=16)
+
+    for tick in boxplot.get_xticklabels():
+        tick.set_fontsize(16)
+    for tick in boxplot.get_yticklabels():
+        tick.set_fontsize(16)
 
     # Shows a Bar Chart
     data_to_bar_plot.plot.bar(x=agent_type, y=data_type, rot=0)

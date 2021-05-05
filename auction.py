@@ -22,7 +22,7 @@ class Auction(Model):
         super().__init__()
         self.information = parameters | bidder_types
 
-        self.auction_types = list(parameters["Auction Types"].split(','))
+        self.auction_types = parameters["Auction Types"]
         self.current_auction = self.auction_types[0]
 
         # Create auctioneer
@@ -66,9 +66,9 @@ class Auction(Model):
 
     def select_auction_type(self):
         """ Determines which auction to be selected. """
-        if self.current_auction == 't1' or self.current_auction == 't2':
+        if self.current_auction == 'E' or self.current_auction == 'D':
             self.multi_round_auction()
-        elif self.current_auction == 't3' or self.current_auction == 't4':
+        elif self.current_auction == 'F' or self.current_auction == 'V':
             self.one_shot_auction(True)
 
     def multi_round_auction(self):

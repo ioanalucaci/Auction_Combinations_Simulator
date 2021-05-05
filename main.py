@@ -15,7 +15,7 @@ headers = ('Auction Types', 'Auctioneer Type', 'A', 'B', 'C', 'D', 'Winner Type'
 simulator, parameters, bidders = pr.read_parameters(headers)
 
 auctioneer_types = parameters["Auctioneer Type"]
-auction_types = parameters["Auction Types"].split('),(')
+auction_types = parameters["Auction Types"].split(',')
 file_name = mw.write_metrics(headers)
 
 # Start the counter and begin the simulation
@@ -33,7 +33,7 @@ for counter in range(0, simulator["Number of Rounds"]):
 
         # Loop dealing with all the different auction types
         for auction_combination in auction_types:
-            parameters["Auction Types"] = auction_combination.replace('(', '').replace(')', '')
+            parameters["Auction Types"] = auction_combination
 
             agents_factory.update_prices(parameters["Auction Types"])
 
@@ -63,6 +63,6 @@ if "Auctioneer Type" in agent_type:
     types["Auctioneer Type"] = auctioneer_types
 
 if "Auction Types" in agent_type:
-    types["Auction Types"] = [auction_type.replace("(", "").replace(")", "") for auction_type in auction_types]
+    types["Auction Types"] = auction_types
 
 da.analyse_data(file_name, list(data_type.split(',')), list(agent_type.split(',')), types)
