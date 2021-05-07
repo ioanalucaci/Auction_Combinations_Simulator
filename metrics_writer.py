@@ -1,24 +1,20 @@
 import csv
-from datetime import datetime
 
 
-def write_metrics(headers):
+def write_metrics(headers, file_name):
     """
     Writes the metrics in a csv file
 
     :param headers: the headers for the csv file.
-    :return the name of the .csv file
-    """
-    today = datetime.today()
+    :param file_name: the name of the file.
 
-    file_name = "metrics " + today.strftime('%d-%m-%y') + ".csv"
+    """
 
     with open(file_name, mode='w+', newline='') as metrics_file:
         metrics_writer = csv.writer(metrics_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         # First, write the table header.
         metrics_writer.writerow(headers)
-    return file_name
 
 
 def write_simulators(file_name, list_of_auctions, headers):
