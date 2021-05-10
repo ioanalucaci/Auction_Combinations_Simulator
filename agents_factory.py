@@ -1,8 +1,11 @@
+"""
+Class in charge of creating agents. Here, the risk, base rate and utility can be updated.
+"""
 import random
 
 
 class AgentsFactory:
-    """Class in charge of creating the agents."""
+    """Class in charge of creating the bidders and auctions."""
     def __init__(self, parameters, bidder_types):
         """
         The initialising function.

@@ -23,6 +23,7 @@ def update_rate(profile, old_rate, utility, risk):
 
     new_rate = functions[profile](old_rate, utility, risk)
 
+    # We ensure rate can only be between 0 and 0.1
     while new_rate > 0.1:
         difference = (new_rate - old_rate) / 100
 

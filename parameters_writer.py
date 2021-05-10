@@ -1,9 +1,14 @@
+"""
+Functions in charge of writing the parameters.
+"""
+
+
 def write_simulation_information(number_of_rounds, data_type, agent_type):
     """Writes the simulation information in the input file.
 
-    :param number_of_rounds: number of rounds
-    :param data_type: type of data
-    :param agent_type: type of agent
+    :param number_of_rounds: The number of rounds
+    :param data_type: The type of data
+    :param agent_type: The type of agent
     """
 
     auction_file = open("auction.txt", "w")
@@ -23,10 +28,10 @@ def write_simulation_information(number_of_rounds, data_type, agent_type):
 def write_auction_information(number_of_bidders, auction_types, reserve_price, auctioneer_type):
     """ Writes the auction information in the input file.
 
-    :param number_of_bidders:
-    :param auction_types:
-    :param reserve_price:
-    :param auctioneer_type:
+    :param number_of_bidders: The number of bidders
+    :param auction_types: The auction types
+    :param reserve_price: The reserve price
+    :param auctioneer_type: The auctioneer type
     """
     auction_file = open("auction.txt", "a")
     result = f"# Auction\nNumber of Bidders = {number_of_bidders}\nAuction Types = {auction_types}\nReserve Price = {reserve_price}\nAuctioneer Type = {auctioneer_type}\n\n"
@@ -36,10 +41,10 @@ def write_auction_information(number_of_bidders, auction_types, reserve_price, a
 def write_bidders_percentages(bidder_a, bidder_b, bidder_c, bidder_d):
     """ Writes the percentages of bidders in the input file.
 
-    :param bidder_a:
-    :param bidder_b:
-    :param bidder_c:
-    :param bidder_d:
+    :param bidder_a: The percentage of bidders of type A
+    :param bidder_b: The percentage of bidders of type B
+    :param bidder_c: The percentage of bidders of type C
+    :param bidder_d: The percentage of bidders of type D
     """
     auction_file = open("auction.txt", "a")
     result = f"# Bidders' Type Percentages\nA = {bidder_a}\nB = {bidder_b}\nC = {bidder_c}\nD = {bidder_d}\n"

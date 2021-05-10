@@ -42,7 +42,7 @@ class Bidder(Agent):
         :param current_bid: the current bid of the auctioneer
         :returns: True if it decides to bid; otherwise False
         """
-        # If it's a one-shot, then the bidder has to send a bid
+
         if self.model.current_auction in ['F', 'V']:
             return True
 
@@ -83,12 +83,9 @@ class Bidder(Agent):
         :param current_bid: The current bid of the auctioneer.
         :return: the personal bid to submit.
         """
-
         personal_bid = current_bid + current_bid * self.rate
-
         if personal_bid > self.budget:
             return -10
-
         return personal_bid
 
     def dutch_auction(self, current_bid):
@@ -98,12 +95,10 @@ class Bidder(Agent):
         :param current_bid: The current bid of the auctioneer.
         :return: the personal bid to submit.
         """
-
         personal_bid = current_bid - current_bid * self.rate
 
         if personal_bid > self.budget:
             personal_bid = self.budget
-
         return personal_bid
 
     def sealedbid_auction(self):
@@ -113,7 +108,6 @@ class Bidder(Agent):
         :return: the personal bid to submit.
         """
         chance = random.random()
-
         if chance <= self.risk:
             return self.budget
         else:
@@ -126,7 +120,6 @@ class Bidder(Agent):
         :return: the personal bid to submit.
         """
         chance = random.random()
-
         if chance <= self.risk:
             return self.budget
         else:

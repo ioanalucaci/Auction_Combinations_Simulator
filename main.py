@@ -1,3 +1,5 @@
+"""The main file."""
+
 import time
 from datetime import datetime
 from auction import *
